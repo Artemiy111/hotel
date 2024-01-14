@@ -3,11 +3,22 @@ import UnoCSS from 'unocss/vite'
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  modules: ['nuxt-primevue'],
+  modules: ['nuxt-primevue', '@nuxt/image'],
   css: ['@/assets/css/main.css'],
   imports: { autoImport: true },
   components: {
     dirs: [],
+  },
+  image: {
+    format: ['avif', 'webp', 'jpeg'],
+    screens: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+      '2xl': 1536,
+    },
   },
 
   vite: {
@@ -17,9 +28,9 @@ export default defineNuxtConfig({
     plugins: { '@unocss/postcss': {} },
   },
   primevue: {
+    usePrimeVue: false,
     cssLayerOrder: 'reset, base, primevue',
     components: { include: '*', prefix: 'U' },
-    options: { unstyled: true },
-    importPT: { as: 'Lara', from: path.resolve(__dirname, './presets/lara/') },
+    // importPT: { as: 'Lara', from: path.resolve(__dirname, './presets/lara/') },
   },
 })

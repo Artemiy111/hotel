@@ -10,18 +10,22 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
+    "@iconify/json": "^2.2.168",
     "@unocss/nuxt": "^0.58.3",
     "@unocss/transformer-directives": "^0.58.3",
     "nuxt": "^3.9.1",
     "nuxt-primevue": "^0.2.2",
+    "prettier-plugin-tailwindcss": "^0.5.11",
     "unocss": "^0.58.3",
     "vue": "^3.4.10",
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "@nuxt/image": "^1.2.0",
     "@nuxtjs/tailwindcss": "^6.10.4",
     "@unocss/postcss": "^0.58.3",
     "@unocss/reset": "^0.58.3",
+    "prettier": "^3.2.2",
     "primevue": "^3.46.0"
   }
 }
