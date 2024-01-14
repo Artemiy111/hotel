@@ -1,0 +1,5 @@
+@import url(@unocss/reset/tailwind.css);
+
+* {
+  min-width: 0;
+}
