@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import RoomCardFull from '~/components/RoomCardFull.vue'
+
 import type { UOverlayPanel } from '#build/components'
 
 const checkIn = ref<Date | null>(null)
@@ -32,10 +34,6 @@ const isDateBeforeToday = (today: Date, date: Date) => {
   <section class="h-100dvh relative flex flex-col items-center justify-center gap-10">
     <NuxtImg src="/images/hotel-screen.jpg" class="z--1 absolute h-full w-full" />
     <h1 class="text-4xl font-bold text-white">Бронируйте номера в нашем гостевом доме</h1>
-    <UInputGroup>
-      <UInputNumber show-buttons />
-      <!-- <UInputGroupAddon>dfdf</UInputGroupAddon> -->
-    </UInputGroup>
     <form
       class="flex gap-2 rounded-3xl p-10 shadow-lg backdrop-blur-sm backdrop-brightness-75"
       @submit.prevent
@@ -106,15 +104,21 @@ const isDateBeforeToday = (today: Date, date: Date) => {
   <section id="rooms" class="container m-auto mt-20 flex flex-col gap-8">
     <h2 class="text-4xl font-bold">Номера</h2>
     <div class="grid grid-cols-3 gap-5">
-      <div v-for="n in 3" class="w-full overflow-hidden rounded-xl border-2 border-slate-200">
+      <div
+        v-for="n in 3"
+        class="flex w-full flex-col overflow-hidden rounded-xl border-2 border-surface-200"
+      >
         <NuxtImg src="/images/hotel-screen.jpg" class="aspect-video w-full" />
-        <UGalleria> </UGalleria>
-        <div class="p-4">
+        <div class="flex flex-col p-4">
           <h6 class="text-2xl font-bold">Делюкс</h6>
           <span class="mt-3"> 1500 р/ночь</span>
+          <UButton class="mt-3 w-max" size="small" label="" outlined>Подробнее</UButton>
         </div>
       </div>
     </div>
+  </section>
+  <section class="container m-auto">
+    <RoomCardFull />
   </section>
   <section class="container m-auto mt-20 flex flex-col gap-8">
     <div class="flex flex-col gap-4">
