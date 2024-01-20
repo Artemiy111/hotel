@@ -1,125 +1,66 @@
 <script setup lang="ts">
+import DateBookingPanel from '~/components/DateBookingPanel.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
+import type { Room } from '~/types'
 
-import type { UOverlayPanel } from '#build/components'
+const cardDialogInfo = ref<Room | null>(null)
 
-const checkIn = ref<Date | null>(null)
-const checkOut = ref<Date | null>(null)
+const isCardDialogVisible = ref(false)
 
-const adults = ref(1)
-const children = ref(0)
-
-const refOverlay = ref<InstanceType<typeof UOverlayPanel> | null>(null)
-
-const openOverlay = (event: Event) => {
-  refOverlay.value?.show(event)
+const openCardOverlay = (room: Room) => {
+  cardDialogInfo.value = room
+  isCardDialogVisible.value = true
 }
 
-const now = new Date()
-const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+watch(isCardDialogVisible, () => {
+  if (!isCardDialogVisible.value) cardDialogInfo.value = null
+})
 
-const getDate = (date: { day: number; month: number; year: number }): Date => {
-  const newDate = new Date(date.year, date.month, date.day)
-  return newDate
-}
-
-const isDateBeforeToday = (today: Date, date: Date) => {
-  const delta = today.getTime() - date.getTime()
-  const ONE_DAY = 1000 * 60 * 60 * 24
-  return delta / ONE_DAY > 1
-}
+const { data: rooms, error } = await useFetch('/api/rooms')
 </script>
 
 <template>
   <section class="h-100dvh relative flex flex-col items-center justify-center gap-10">
     <NuxtImg src="/images/hotel-screen.jpg" class="z--1 absolute h-full w-full" />
     <h1 class="text-4xl font-bold text-white">Бронируйте номера в нашем гостевом доме</h1>
-    <form
-      class="flex gap-2 rounded-3xl p-10 shadow-lg backdrop-blur-sm backdrop-brightness-75"
-      @submit.prevent
-    >
-      <UCalendar
-        placeholder="Дата заезда"
-        show-icon
-        icon-display="input"
-        :min-date="today"
-        date-format="dd/mm/yy"
-        v-model="checkIn"
-        :pt="{
-          dayLabel: ({ context: e }) => ({
-            // class: [{ 'bg-red-100': !e }],
-          }),
-        }"
-        :pt-options="{ mergeProps: true }"
-      >
-        <template #date="dateSlot">
-          <span :class="[isDateBeforeToday(today, getDate(dateSlot.date)) ? 'line-through' : '']">{{
-            dateSlot.date.day
-          }}</span></template
-        >
-      </UCalendar>
-      <UCalendar
-        placeholder="Дата выезда"
-        show-icon
-        icon-display="input"
-        :min-date="today"
-        date-format="dd/mm/yy"
-        v-model="checkOut"
-      />
-      <UButton
-        label=""
-        @click="openOverlay"
-        class=""
-        :pt="{ root: 'bg-white text-surface-800 hover:bg-white' }"
-        :pt-options="{ mergeProps: true }"
-        >Взрослых: {{ adults }}, детей: {{ children }}</UButton
-      >
-      <UOverlayPanel ref="refOverlay">
-        <div class="flex flex-col gap-2">
-          <UInputGroup class="">
-            <UInputGroupAddon class="w-30">Взрослых</UInputGroupAddon>
-            <UInputNumber
-              class="[&_input]:rounded-l-0"
-              :min="1"
-              :max="10"
-              v-model="adults"
-              show-buttons
-            />
-          </UInputGroup>
-          <UInputGroup>
-            <UInputGroupAddon class="w-30">Детей</UInputGroupAddon>
-            <UInputNumber
-              class="[&_input]:rounded-l-0"
-              :min="0"
-              :max="10"
-              v-model="children"
-              show-buttons
-            />
-          </UInputGroup>
-        </div>
-      </UOverlayPanel>
-      <UButton type="submit" label="Найти" />
-    </form>
+    <DateBookingPanel class="rounded-3xl p-10 shadow-lg backdrop-blur-sm backdrop-brightness-75" />
   </section>
   <section id="rooms" class="container m-auto mt-20 flex flex-col gap-8">
     <h2 class="text-4xl font-bold">Номера</h2>
     <div class="grid grid-cols-3 gap-5">
       <div
-        v-for="n in 3"
+        v-for="room in rooms"
         class="flex w-full flex-col overflow-hidden rounded-xl border-2 border-surface-200"
       >
-        <NuxtImg src="/images/hotel-screen.jpg" class="aspect-video w-full" />
-        <div class="flex flex-col p-4">
-          <h6 class="text-2xl font-bold">Делюкс</h6>
-          <span class="mt-3"> 1500 р/ночь</span>
+        <NuxtImg
+          :src="`/images/rooms/${room.id}/${room.images.preview.id}.jpg`"
+          class="aspect-video w-full"
+        />
+        <div class="flex cursor-pointer flex-col p-4" @click="openCardOverlay(room)">
+          <h6 class="text-2xl font-bold">{{ room.title }}</h6>
+          <span class="mt-3"> {{ room.price }}р ночь</span>
           <UButton class="mt-3 w-max" size="small" label="" outlined>Подробнее</UButton>
         </div>
       </div>
     </div>
   </section>
-  <section class="container m-auto">
-    <RoomCardFull />
-  </section>
+  <UDialog
+    v-model:visible="isCardDialogVisible"
+    modal
+    :closable="false"
+    :dismissable-mask="true"
+    :show-header="false"
+    :pt="{ root: 'w-95dvw', content: '', mask: 'backdrop-brightness-75' }"
+    :pt-options="{ mergeProps: false, mergeSections: true }"
+  >
+    <template #container>
+      <RoomCardFull
+        v-if="cardDialogInfo"
+        class="rounded-xl border-2 border-surface-200 bg-white p-8"
+        :room="cardDialogInfo"
+      />
+    </template>
+  </UDialog>
   <section class="container m-auto mt-20 flex flex-col gap-8">
     <div class="flex flex-col gap-4">
       <h3 class="text-4xl font-bold">Расположение</h3>

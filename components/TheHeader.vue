@@ -1,16 +1,21 @@
 <script setup lang="ts">
+const route = useRoute()
+
+const isMainPage = computed(() => route.fullPath === '/')
+
 const routes = [
   {
     title: 'Главная',
     link: '/',
   },
-  { title: 'Номера', link: '/rooms' },
+  { title: 'Номера', link: '/rooms/1' },
 ]
 </script>
 
 <template>
   <header
-    class="z-100 fixed left-0 top-0 flex w-full justify-between gap-2 p-4 text-white backdrop-blur-lg backdrop-brightness-75"
+    class="z-100 flex w-full justify-between gap-2 p-4 text-white backdrop-blur-lg backdrop-brightness-75"
+    :class="[isMainPage ? 'fixed left-0 top-0 ' : 'mb-8']"
   >
     <span class="font-bold">Отель Ватриго</span>
 
