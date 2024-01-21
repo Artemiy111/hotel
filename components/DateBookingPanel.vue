@@ -2,7 +2,7 @@
 import type { UOverlayPanel } from '#build/components'
 import { useBookingStore } from '~/store/useBookingStore'
 
-const props = withDefaults(defineProps<{ showButton: boolean }>(), { showButton: true })
+const props = withDefaults(defineProps<{ showButton?: boolean }>(), { showButton: true })
 
 const bookingStore = useBookingStore()
 
@@ -32,7 +32,7 @@ const isDateBeforeToday = (today: Date, date: Date) => {
 
 <template>
   <form class="flex gap-2" @submit.prevent>
-    <UInputGroup class="flex w-min">
+    <UInputGroup class="flex w-fit">
       <UInputGroupAddon><div class="i-mingcute:calendar-month-line"></div></UInputGroupAddon>
       <UCalendar
         placeholder="Дата заезда"
@@ -40,7 +40,7 @@ const isDateBeforeToday = (today: Date, date: Date) => {
         date-format="dd/mm/yy"
         v-model="bookingStore.checkIn"
         :pt="{
-          input: 'rounded-l-0',
+          // input: 'rounded-l-0',
           // dayLabel: ({ context: e }) => ({
           // class: [{ 'bg-red-100': !e }],
           // }),
@@ -54,7 +54,7 @@ const isDateBeforeToday = (today: Date, date: Date) => {
         >
       </UCalendar>
     </UInputGroup>
-    <UInputGroup class="flex w-min">
+    <UInputGroup class="flex w-fit">
       <UInputGroupAddon><div class="i-mingcute:calendar-month-line"></div></UInputGroupAddon>
 
       <UCalendar
@@ -63,7 +63,7 @@ const isDateBeforeToday = (today: Date, date: Date) => {
         date-format="dd/mm/yy"
         v-model="bookingStore.checkOut"
         :pt="{
-          input: 'rounded-l-0',
+          // input: 'rounded-l-0',
         }"
         :pt-options="{ mergeProps: true }"
       />

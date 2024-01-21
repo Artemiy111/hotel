@@ -1,3 +1,23 @@
 @import url('./reset.css') layer(reset);
 @import url('./base.css') layer(base);
 /* @import url('./galleria.css') layer(primevue); */
+@layer base {
+}
+
+.p-component {
+  font-size: 1em;
+  span {
+    @apply text-xl;
+  }
+  .p-inputtext {
+    @apply w-60;
+  }
+}
+
+.p-tabview-panels {
+  @apply text-unset p-0 pt-4;
+}
+
+.p-tabview-header-action {
+  @apply pt-0;
+}

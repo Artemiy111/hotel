@@ -13,6 +13,6 @@ const guest = defineModel<{ lastName: string; name: string; middleMane: string }
   <div class="flex gap-4">
     <UInputText placeholder="Фамилия" v-model="guest.lastName" />
     <UInputText placeholder="Имя" v-model="guest.name" />
-    <UInputText placeholder="Отчество, если есть" v-model="guest.middleMane" />
+    <UInputText placeholder="Отчество" v-model="guest.middleMane" />
   </div>
 </template>

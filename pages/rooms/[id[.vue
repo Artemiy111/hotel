@@ -15,10 +15,6 @@ type CheckTimeOption = {
 }
 
 const checkInTimeOptions: CheckTimeOption[] = [
-  { hour: 12, minute: 0 },
-  { hour: 12, minute: 30 },
-  { hour: 13, minute: 0 },
-  { hour: 13, minute: 30 },
   { hour: 14, minute: 0 },
   { hour: 14, minute: 30 },
   { hour: 15, minute: 0 },
@@ -61,7 +57,7 @@ const checkOutTimeOptions: CheckTimeOption[] = [
   { hour: 11, minute: 30 },
   { hour: 12, minute: 0 },
 ]
-const checkOutTime = ref(checkOutTimeOptions[0])
+const checkOutTime = ref(checkOutTimeOptions.at(-1))
 
 const route = useRoute()
 const roomId = route.params.id as string
@@ -83,13 +79,25 @@ const isBookingForAnotherPerson = ref(false)
 
 const guests = ref<GuestName[]>([])
 
-const addGuestField = () => {
-  guests.value.push({ lastName: '', name: '', middleMane: '' })
+const addGuestField = (guestType: { isChild: boolean }) => {
+  if (guestType.isChild) children.value.push({ lastName: '', name: '', middleMane: '', age: 7 })
+  else guests.value.push({ lastName: '', name: '', middleMane: '' })
 }
 
-const deleteGuestField = (index: number) => {
-  guests.value.splice(index, 1)
+const deleteGuestField = (index: number, guestType: { isChild: boolean }) => {
+  if (guestType.isChild) children.value.splice(index, 1)
+  else guests.value.splice(index, 1)
 }
+
+const children = ref<Array<GuestName & { age: number }>>([])
+
+const haveChildren = ref(false)
+
+const childAgeOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+
+const wishes = ref('')
+
+const price = ref(6000)
 </script>
 <template>
   <div class="container m-auto" v-if="room">
@@ -109,7 +117,7 @@ const deleteGuestField = (index: number) => {
         </p>
         <div class="grid grid-cols-[min-content_1fr] items-center gap-4">
           <span>Заезд</span>
-          <UDropdown :options="checkInTimeOptions" v-model="checkInTime">
+          <UDropdown class="w-fit min-w-32" :options="checkInTimeOptions" v-model="checkInTime">
             <template #value="{ value: time }: { value: CheckTimeOption }">
               {{ time.hour }}:{{ time.minute == 0 ? '00' : time.minute }}
             </template>
@@ -118,7 +126,7 @@ const deleteGuestField = (index: number) => {
             </template></UDropdown
           >
           <span>Выезд</span>
-          <UDropdown :options="checkOutTimeOptions" v-model="checkOutTime">
+          <UDropdown class="w-fit min-w-32" :options="checkOutTimeOptions" v-model="checkOutTime">
             <template #value="{ value: time }: { value: CheckTimeOption }">
               {{ time.hour }}:{{ time.minute == 0 ? '00' : time.minute }}
             </template>
@@ -141,7 +149,7 @@ const deleteGuestField = (index: number) => {
         <div class="flex flex-col gap-4">
           <RoomGuestInfo v-model="contactInfo.guest" />
           <div class="flex gap-4">
-            <UInputGroup class="flex w-min">
+            <UInputGroup class="flex w-fit">
               <UInputGroupAddon>
                 <div class="i-mingcute:mail-open-line"></div>
               </UInputGroupAddon>
@@ -152,7 +160,7 @@ const deleteGuestField = (index: number) => {
                 v-model="contactInfo.email"
               />
             </UInputGroup>
-            <UInputGroup class="flex w-min">
+            <UInputGroup class="flex w-fit">
               <UInputGroupAddon>
                 <div class="i-mingcute:phone-line"></div>
               </UInputGroupAddon>
@@ -176,12 +184,84 @@ const deleteGuestField = (index: number) => {
           <RoomGuestInfo v-show="!isBookingForAnotherPerson" v-model="contactInfo.guest" />
           <div class="flex gap-4" v-for="(guest, index) in guests">
             <RoomGuestInfo v-model="guests[index]" />
-            <UButton @click="deleteGuestField(index)" outlined severity="warning">
+            <UButton
+              @click="deleteGuestField(index, { isChild: false })"
+              outlined
+              severity="warning"
+            >
               <div class="i-mingcute:close-line"></div>
             </UButton>
           </div>
-          <UButton @click="addGuestField" class="w-fit" outlined label="">Добавить гостя</UButton>
+          <UButton @click="addGuestField({ isChild: false })" class="w-fit" outlined label=""
+            >Добавить гостя</UButton
+          >
         </div>
+        <div class="flex items-center gap-4">
+          <label for="have-children">Дети</label>
+          <UCheckbox input-id="have-children" v-model="haveChildren" binary />
+        </div>
+        <div class="flex flex-col gap-4" v-if="haveChildren">
+          <div class="flex gap-4" v-for="(child, index) in children">
+            <RoomGuestInfo :key="index" v-model="children[index]" />
+            <UDropdown :options="childAgeOptions" v-model="children[index].age" class="w-40">
+              <template #value="{ value: age }: { value: number }"> {{ age }} лет </template>
+            </UDropdown>
+            <UButton
+              @click="deleteGuestField(index, { isChild: true })"
+              outlined
+              severity="warning"
+            >
+              <div class="i-mingcute:close-line"></div>
+            </UButton>
+          </div>
+          <UButton @click="addGuestField({ isChild: true })" class="w-fit" outlined label=""
+            >Добавить ребёнка</UButton
+          >
+        </div>
+      </section>
+      <section class="flex flex-col gap-4">
+        <h3 class="text-3xl font-bold">Дополнительная информация</h3>
+        <UTextarea
+          class="max-w-3xl"
+          v-model="wishes"
+          placeholder="Напишите свои поделания. Мы постараемся их исполнить"
+        />
+      </section>
+      <section class="flex flex-col gap-4">
+        <h3 class="text-3xl font-bold">Оплата</h3>
+        <UTabView class="w-fit">
+          <UTabPanel :pt="{ headerAction: 'pl-0 text-2xl' }"
+            ><template #header>
+              <h4 class="text-bold">При заселении</h4>
+            </template>
+            <template #default>
+              <div class="flex flex-col items-start gap-4">
+                <p class="max-w-5xl">
+                  Выбирая этот способ оплаты, вы не вносите предоплату за бронь. Получите
+                  подтверждение бронирования на электронную почту, которую указали при бронировании,
+                  и предъявите его при заселении.
+                </p>
+                <UButton label="Забронировать" />
+              </div>
+            </template>
+          </UTabPanel>
+          <UTabPanel :pt="{ headerAction: 'text-2xl' }">
+            <template #header> <h4>Банковской картой</h4> </template>
+            <template #default>
+              <div class="flex flex-col items-start gap-4">
+                <span class="font-bold">
+                  Предоплата: <span class="text-primary-500">{{ price }}р</span>
+                </span>
+                <p class="max-w-5xl">
+                  Оплачивается вся сумма брони. Данный способ оплаты поддерживает платежи только с
+                  карт, выпущенных российскими банками, а также с карт платежной системы Мир,
+                  выпущенных банками других стран.
+                </p>
+                <UButton label="Оплатить" />
+              </div>
+            </template>
+          </UTabPanel>
+        </UTabView>
       </section>
     </div>
   </div>

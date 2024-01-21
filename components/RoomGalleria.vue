@@ -9,6 +9,7 @@ const props = defineProps<{ room: Room }>()
     :value="props.room.images.all"
     :id="'u-galleria'"
     :pt-options="{ mergeProps: true }"
+    :unstyled="true"
     :pt="{
       root: 'rounded-xl overflow-clip',
       content: '',

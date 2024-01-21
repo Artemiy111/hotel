@@ -2,7 +2,7 @@
 import type { Room } from '~/types'
 import RoomGalleria from '~/components/RoomGalleria.vue'
 
-const props = withDefaults(defineProps<{ room: Room; showButton: boolean }>(), {
+const props = withDefaults(defineProps<{ room: Room; showButton?: boolean }>(), {
   showButton: true,
 })
 </script>

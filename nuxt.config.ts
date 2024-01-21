@@ -29,7 +29,7 @@ export default defineNuxtConfig({
   },
   primevue: {
     usePrimeVue: false,
-    cssLayerOrder: 'reset, base, primevue',
+    cssLayerOrder: 'reset, primevue, base',
     components: { include: '*', prefix: 'U' },
     // importPT: { as: 'Lara', from: path.resolve(__dirname, './presets/lara/') },
   },
