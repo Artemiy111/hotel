@@ -6,6 +6,8 @@ export const rooms: Room[] = [
     title: 'Обычный',
     price: 1200,
     conditions: {
+      maxAdults: 2,
+      maxChildren: 2,
       square: 10,
       other: ['Wi-Fi', 'Двуспальная кровать'],
     },
@@ -19,6 +21,8 @@ export const rooms: Room[] = [
     title: 'Люкс',
     price: 1500,
     conditions: {
+      maxAdults: 2,
+      maxChildren: 3,
       square: 20,
       other: ['Wi-Fi', 'Двуспальная кровать', 'Сейф'],
     },
@@ -32,6 +36,8 @@ export const rooms: Room[] = [
     title: 'Делюкс',
     price: 2000,
     conditions: {
+      maxAdults: 4,
+      maxChildren: 6,
       square: 25,
       other: ['Wi-Fi', 'Двуспальная кровать', 'Сейф', 'Душевая кабина', 'Кондиционер'],
     },

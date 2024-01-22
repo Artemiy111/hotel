@@ -1,6 +1,21 @@
 <script setup lang="ts">
-// eslint-disable-next-line ts/consistent-type-imports
-import type { UOverlayPanel } from '#components'
+import {
+  type Interval,
+  addDays,
+  addYears,
+  areIntervalsOverlapping,
+  eachDayOfInterval,
+  format,
+  getDate,
+  isAfter,
+  isBefore,
+  isSameDay,
+  isSameMonth,
+  isToday,
+  startOfDay,
+  startOfMonth,
+} from 'date-fns'
+import { UOverlayPanel } from '#components'
 import { useBookingStore } from '~/store/useBookingStore'
 
 const props = withDefaults(defineProps<{ showButton?: boolean }>(), { showButton: true })
@@ -17,41 +32,113 @@ function openOverlay(event: Event) {
 }
 
 const now = new Date()
-const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+const startOfToday = startOfDay(now)
+const startOfTomorrow = addDays(startOfToday, 1)
+const _startOfThisMonth = startOfMonth(now)
 
-function getDate(date: { day: number, month: number, year: number }): Date {
+const disabledIntervals: Interval[] = [
+  { start: addDays(startOfToday, 4), end: addDays(startOfToday, 4) },
+  { start: addDays(startOfToday, 25), end: addDays(startOfToday, 30) },
+]
+
+const disabledDates = disabledIntervals.map(interval => eachDayOfInterval(interval)).flat()
+
+// ([addDays(startOfToday, 4), addDays(startOfToday, 30)])
+
+const startMinDate = startOfToday
+const startMaxDate = addYears(startOfToday, 1)
+const startAndEndBooking = ref< [Date, Date | null] | null >([startOfToday, startOfTomorrow])
+watch(startAndEndBooking, () => {
+  bookingStore.value.checkIn = startAndEndBooking.value?.[0] || null
+  bookingStore.value.checkOut = startAndEndBooking.value?.[1] || null
+})
+
+interface CalendarDate {
+  day: number
+  month: number // month index
+  year: number
+  selectable: boolean
+  otherMonth?: boolean
+}
+
+function fromCalendarDateToDate(date: CalendarDate): Date {
   const newDate = new Date(date.year, date.month, date.day)
   return newDate
 }
 
-function isDateBeforeToday(today: Date, date: Date) {
-  const delta = today.getTime() - date.getTime()
-  const ONE_DAY = 1000 * 60 * 60 * 24
-  return delta / ONE_DAY > 1
+function isBeforeMinDate(date: Date): boolean {
+  return isBefore(date, startMinDate)
 }
+
+function isAfterMaxDate(date: Date) {
+  return isAfter(date, startMaxDate)
+}
+
+function isExplisitlyDisabledCalendarDate(calendarDate: CalendarDate): boolean {
+  const date = fromCalendarDateToDate(calendarDate)
+
+  if (calendarDate.otherMonth || isBeforeMinDate(date) || isAfterMaxDate(date))
+    return false
+  return !calendarDate.selectable
+}
+
+const formattedCheckIn = computed(() => {
+  return bookingStore.value.checkIn ? format(bookingStore.value.checkIn, 'dd/MM/yyyy') : null
+})
+
+const formattedCheckOut = computed(() => {
+  return bookingStore.value.checkOut ? format(bookingStore.value.checkOut, 'dd/MM/yyyy') : null
+})
 </script>
 
 <template>
+  <!-- eslint-disable vue/valid-v-model -->
+
   <form class="flex gap-2" @submit.prevent>
     <UInputGroup class="w-fit flex">
       <UInputGroupAddon><div class="i-mingcute:calendar-month-line" /></UInputGroupAddon>
       <UCalendar
-        v-model="bookingStore.checkIn"
+        v-model="(startAndEndBooking as unknown as Date[] | null)"
+        :input-props="{
+          value: formattedCheckIn,
+        }"
         placeholder="Дата заезда"
-        :min-date="today"
+        selection-mode="range"
+        view="date"
         date-format="dd/mm/yy"
+        :disabled-dates="disabledDates"
+        :min-date="startMinDate"
+        :max-date="startMaxDate"
+        :select-other-months="false"
+        :number-of-months="2"
+        :manual-input="false"
+        :show-button-bar="true"
         :pt="{
-          // input: 'rounded-l-0',
-          // dayLabel: ({ context: e }) => ({
-          // class: [{ 'bg-red-100': !e }],
-          // }),
+          input: 'rounded-l-0',
+          dayLabel: ({ context: e }) => ({
+            class: [{ 'bg-red-200': isExplisitlyDisabledCalendarDate(e.date as unknown as CalendarDate) }],
+          }),
+
         }"
         :pt-options="{ mergeProps: true }"
       >
-        <template #date="dateSlot">
-          <span :class="[isDateBeforeToday(today, getDate(dateSlot.date)) ? 'line-through' : '']">{{
-            dateSlot.date.day
-          }}</span>
+        <template #date="{ date }">
+          <span
+            v-if="isExplisitlyDisabledCalendarDate(date)"
+            v-tooltip="{ value: 'Уже забронированно', pt: { text: 'whitespace-nowrap w-max' } }"
+            :data-pc-ripple="false"
+            class="focus:unset pointer-events-auto bg-red-200"
+          >
+            {{ date.day }}
+
+          </span>
+          <span
+            v-else
+            :class="[
+              isBeforeMinDate(fromCalendarDateToDate(date)) || isAfterMaxDate(fromCalendarDateToDate(date))
+                ? 'line-through' : '',
+            ]"
+          >{{ date.day }}</span>
         </template>
       </UCalendar>
     </UInputGroup>
@@ -62,7 +149,7 @@ function isDateBeforeToday(today: Date, date: Date) {
         v-model="bookingStore.checkOut"
         placeholder="Дата выезда"
         date-format="dd/mm/yy"
-        :min-date="today"
+        :min-date="startOfToday"
         :pt="{
           // input: 'rounded-l-0',
         }"

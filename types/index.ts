@@ -3,6 +3,8 @@ export interface Room {
   title: string
   price: number
   conditions: {
+    maxAdults: number
+    maxChildren: number
     square: number
     other: string[]
   }
