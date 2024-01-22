@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { UOverlayPanel } from '#build/components'
+// eslint-disable-next-line ts/consistent-type-imports
+import type { UOverlayPanel } from '#components'
 import { useBookingStore } from '~/store/useBookingStore'
 
 const props = withDefaults(defineProps<{ showButton?: boolean }>(), { showButton: true })
@@ -11,19 +12,19 @@ const children = ref(0)
 
 const refOverlay = ref<InstanceType<typeof UOverlayPanel> | null>(null)
 
-const openOverlay = (event: Event) => {
+function openOverlay(event: Event) {
   refOverlay.value?.show(event)
 }
 
 const now = new Date()
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
-const getDate = (date: { day: number; month: number; year: number }): Date => {
+function getDate(date: { day: number, month: number, year: number }): Date {
   const newDate = new Date(date.year, date.month, date.day)
   return newDate
 }
 
-const isDateBeforeToday = (today: Date, date: Date) => {
+function isDateBeforeToday(today: Date, date: Date) {
   const delta = today.getTime() - date.getTime()
   const ONE_DAY = 1000 * 60 * 60 * 24
   return delta / ONE_DAY > 1
@@ -32,13 +33,13 @@ const isDateBeforeToday = (today: Date, date: Date) => {
 
 <template>
   <form class="flex gap-2" @submit.prevent>
-    <UInputGroup class="flex w-fit">
-      <UInputGroupAddon><div class="i-mingcute:calendar-month-line"></div></UInputGroupAddon>
+    <UInputGroup class="w-fit flex">
+      <UInputGroupAddon><div class="i-mingcute:calendar-month-line" /></UInputGroupAddon>
       <UCalendar
+        v-model="bookingStore.checkIn"
         placeholder="Дата заезда"
         :min-date="today"
         date-format="dd/mm/yy"
-        v-model="bookingStore.checkIn"
         :pt="{
           // input: 'rounded-l-0',
           // dayLabel: ({ context: e }) => ({
@@ -50,18 +51,18 @@ const isDateBeforeToday = (today: Date, date: Date) => {
         <template #date="dateSlot">
           <span :class="[isDateBeforeToday(today, getDate(dateSlot.date)) ? 'line-through' : '']">{{
             dateSlot.date.day
-          }}</span></template
-        >
+          }}</span>
+        </template>
       </UCalendar>
     </UInputGroup>
-    <UInputGroup class="flex w-fit">
-      <UInputGroupAddon><div class="i-mingcute:calendar-month-line"></div></UInputGroupAddon>
+    <UInputGroup class="w-fit flex">
+      <UInputGroupAddon><div class="i-mingcute:calendar-month-line" /></UInputGroupAddon>
 
       <UCalendar
-        placeholder="Дата выезда"
-        :min-date="today"
-        date-format="dd/mm/yy"
         v-model="bookingStore.checkOut"
+        placeholder="Дата выезда"
+        date-format="dd/mm/yy"
+        :min-date="today"
         :pt="{
           // input: 'rounded-l-0',
         }"
@@ -70,33 +71,38 @@ const isDateBeforeToday = (today: Date, date: Date) => {
     </UInputGroup>
     <UButton
       label=""
-      @click="openOverlay"
       class=""
       :pt="{ root: 'bg-white text-surface-800 hover:bg-white' }"
       :pt-options="{ mergeProps: true }"
-      >Взрослых: {{ adults }}, детей: {{ children }}</UButton
+      @click="openOverlay"
     >
+      Взрослых: {{ adults }}, детей: {{ children }}
+    </UButton>
     <UOverlayPanel ref="refOverlay">
       <div class="flex flex-col gap-2">
         <UInputGroup class="">
-          <UInputGroupAddon class="w-30">Взрослых</UInputGroupAddon>
+          <UInputGroupAddon class="w-30">
+            Взрослых
+          </UInputGroupAddon>
           <UInputNumber
+            v-model="adults"
             class="[&_input]:rounded-l-0"
+            show-buttons
             :min="1"
             :max="10"
-            v-model="adults"
-            show-buttons
-            :increment-button-class="'disabled'"
+            increment-button-class="disabled"
           />
         </UInputGroup>
         <UInputGroup>
-          <UInputGroupAddon class="w-30">Детей</UInputGroupAddon>
+          <UInputGroupAddon class="w-30">
+            Детей
+          </UInputGroupAddon>
           <UInputNumber
+            v-model="children"
             class="[&_input]:rounded-l-0"
+            show-buttons
             :min="0"
             :max="10"
-            v-model="children"
-            show-buttons
           />
         </UInputGroup>
       </div>

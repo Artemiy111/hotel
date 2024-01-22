@@ -9,7 +9,7 @@ definePageMeta({
   },
 })
 
-type CheckTimeOption = {
+interface CheckTimeOption {
   hour: number
   minute: number
 }
@@ -61,15 +61,15 @@ const checkOutTime = ref(checkOutTimeOptions.at(-1))
 
 const route = useRoute()
 const roomId = route.params.id as string
-const { data: room, error } = useFetch(`/api/rooms/${roomId}`)
+const { data: room, error: _error } = useFetch(`/api/rooms/${roomId}`)
 
-type GuestName = {
+interface GuestName {
   lastName: string
   name: string
   middleMane: string
 }
 
-const contactInfo = ref<{ guest: GuestName; email: string; tel: string }>({
+const contactInfo = ref<{ guest: GuestName, email: string, tel: string }>({
   guest: { lastName: '', name: '', middleMane: '' },
   email: '',
   tel: '',
@@ -78,18 +78,19 @@ const contactInfo = ref<{ guest: GuestName; email: string; tel: string }>({
 const isBookingForAnotherPerson = ref(false)
 
 const guests = ref<GuestName[]>([])
+const children = ref<Array<GuestName & { age: number }>>([])
 
-const addGuestField = (guestType: { isChild: boolean }) => {
-  if (guestType.isChild) children.value.push({ lastName: '', name: '', middleMane: '', age: 7 })
+function addGuestField(guestType: { isChild: boolean }) {
+  if (guestType.isChild)
+    children.value.push({ lastName: '', name: '', middleMane: '', age: 7 })
   else guests.value.push({ lastName: '', name: '', middleMane: '' })
 }
 
-const deleteGuestField = (index: number, guestType: { isChild: boolean }) => {
-  if (guestType.isChild) children.value.splice(index, 1)
+function deleteGuestField(index: number, guestType: { isChild: boolean }) {
+  if (guestType.isChild)
+    children.value.splice(index, 1)
   else guests.value.splice(index, 1)
 }
-
-const children = ref<Array<GuestName & { age: number }>>([])
 
 const haveChildren = ref(false)
 
@@ -99,49 +100,56 @@ const wishes = ref('')
 
 const price = ref(6000)
 </script>
+
 <template>
-  <div class="container m-auto" v-if="room">
+  <div v-if="room" class="m-auto container">
     <RoomCardFull v-if="room" :room="room" :show-button="false" />
     <!-- <RoomGalleria :room="room" /> -->
     <div class="mt-16 flex flex-col gap-16">
       <section class="flex flex-col gap-4">
-        <h3 class="text-3xl font-bold">Заселение</h3>
+        <h3 class="text-3xl font-bold">
+          Заселение
+        </h3>
         <DateBookingPanel :show-button="false" />
       </section>
       <section class="flex flex-col gap-4">
-        <h3 class="text-3xl font-bold">Время заезда и выезда</h3>
+        <h3 class="text-3xl font-bold">
+          Время заезда и выезда
+        </h3>
         <p>
-          Вы можете выбрать удобное для вас время заезда и выезда<br />
-          Услуга позднего выезда предоставляется за дополнительную плату<br />
+          Вы можете выбрать удобное для вас время заезда и выезда<br>
+          Услуга позднего выезда предоставляется за дополнительную плату<br>
           Стандартное время заезда — 14:00, выезда — 12:00
         </p>
         <div class="grid grid-cols-[min-content_1fr] items-center gap-4">
           <span>Заезд</span>
-          <UDropdown class="w-fit min-w-32" :options="checkInTimeOptions" v-model="checkInTime">
+          <UDropdown v-model="checkInTime" class="min-w-32 w-fit" :options="checkInTimeOptions">
             <template #value="{ value: time }: { value: CheckTimeOption }">
-              {{ time.hour }}:{{ time.minute == 0 ? '00' : time.minute }}
+              {{ time.hour }}:{{ time.minute === 0 ? '00' : time.minute }}
             </template>
             <template #option="{ option: time }: { option: CheckTimeOption }">
-              {{ time.hour }}:{{ time.minute == 0 ? '00' : time.minute }}
-            </template></UDropdown
-          >
+              {{ time.hour }}:{{ time.minute === 0 ? '00' : time.minute }}
+            </template>
+          </UDropdown>
           <span>Выезд</span>
-          <UDropdown class="w-fit min-w-32" :options="checkOutTimeOptions" v-model="checkOutTime">
+          <UDropdown v-model="checkOutTime" class="min-w-32 w-fit" :options="checkOutTimeOptions">
             <template #value="{ value: time }: { value: CheckTimeOption }">
-              {{ time.hour }}:{{ time.minute == 0 ? '00' : time.minute }}
+              {{ time.hour }}:{{ time.minute === 0 ? '00' : time.minute }}
             </template>
             <template #option="{ option: time }: { option: CheckTimeOption }">
-              {{ time.hour }}:{{ time.minute == 0 ? '00' : time.minute }}
-            </template></UDropdown
-          >
+              {{ time.hour }}:{{ time.minute === 0 ? '00' : time.minute }}
+            </template>
+          </UDropdown>
         </div>
       </section>
       <section class="flex flex-col gap-4">
-        <h3 class="text-3xl font-bold">Контактные данные</h3>
+        <h3 class="text-3xl font-bold">
+          Контактные данные
+        </h3>
         <UMessage class="w-fit">
           <template #container>
             <p class="p-6">
-              На электронную почту вам придёт подтверждение бронирования.<br />
+              На электронную почту вам придёт подтверждение бронирования.<br>
               При необходимости мы свяжемся с вами по телефону, чтобы уточнить детали
             </p>
           </template>
@@ -149,20 +157,20 @@ const price = ref(6000)
         <div class="flex flex-col gap-4">
           <RoomGuestInfo v-model="contactInfo.guest" />
           <div class="flex gap-4">
-            <UInputGroup class="flex w-fit">
+            <UInputGroup class="w-fit flex">
               <UInputGroupAddon>
-                <div class="i-mingcute:mail-open-line"></div>
+                <div class="i-mingcute:mail-open-line" />
               </UInputGroupAddon>
               <UInputText
+                v-model="contactInfo.email"
                 placeholder="Email"
                 type="email"
                 pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$"
-                v-model="contactInfo.email"
               />
             </UInputGroup>
-            <UInputGroup class="flex w-fit">
+            <UInputGroup class="w-fit flex">
               <UInputGroupAddon>
-                <div class="i-mingcute:phone-line"></div>
+                <div class="i-mingcute:phone-line" />
               </UInputGroupAddon>
               <UInputText v-model="contactInfo.tel" placeholder="Телефон" type="tel" />
             </UInputGroup>
@@ -170,69 +178,81 @@ const price = ref(6000)
         </div>
       </section>
       <section class="flex flex-col gap-4">
-        <h3 class="text-3xl font-bold">Информация о гостях</h3>
+        <h3 class="text-3xl font-bold">
+          Информация о гостях
+        </h3>
 
         <div class="flex items-center gap-4">
           <label for="booking-for-another-person">Бронирую для другого человека</label>
           <UCheckbox
-            input-id="booking-for-another-person"
             v-model="isBookingForAnotherPerson"
+            input-id="booking-for-another-person"
             binary
           />
         </div>
         <div class="flex flex-col gap-4">
           <RoomGuestInfo v-show="!isBookingForAnotherPerson" v-model="contactInfo.guest" />
-          <div class="flex gap-4" v-for="(guest, index) in guests">
+          <div v-for="(guest, index) in guests" :key="index" class="flex gap-4">
+            <!-- !FIX key -->
             <RoomGuestInfo v-model="guests[index]" />
             <UButton
-              @click="deleteGuestField(index, { isChild: false })"
               outlined
               severity="warning"
+              @click="deleteGuestField(index, { isChild: false })"
             >
-              <div class="i-mingcute:close-line"></div>
+              <div class="i-mingcute:close-line" />
             </UButton>
           </div>
-          <UButton @click="addGuestField({ isChild: false })" class="w-fit" outlined label=""
-            >Добавить гостя</UButton
-          >
+          <UButton class="w-fit" outlined label="" @click="addGuestField({ isChild: false })">
+            Добавить гостя
+          </UButton>
         </div>
         <div class="flex items-center gap-4">
           <label for="have-children">Дети</label>
-          <UCheckbox input-id="have-children" v-model="haveChildren" binary />
+          <UCheckbox v-model="haveChildren" input-id="have-children" binary />
         </div>
-        <div class="flex flex-col gap-4" v-if="haveChildren">
-          <div class="flex gap-4" v-for="(child, index) in children">
+        <div v-if="haveChildren" class="flex flex-col gap-4">
+          <div v-for="(child, index) in children" :key="index" class="flex gap-4">
+            <!-- !FIX key -->
             <RoomGuestInfo :key="index" v-model="children[index]" />
-            <UDropdown :options="childAgeOptions" v-model="children[index].age" class="w-40">
-              <template #value="{ value: age }: { value: number }"> {{ age }} лет </template>
+            <UDropdown v-model="children[index].age" :options="childAgeOptions" class="w-40">
+              <template #value="{ value: age }: { value: number }">
+                {{ age }} лет
+              </template>
             </UDropdown>
             <UButton
-              @click="deleteGuestField(index, { isChild: true })"
               outlined
               severity="warning"
+              @click="deleteGuestField(index, { isChild: true })"
             >
-              <div class="i-mingcute:close-line"></div>
+              <div class="i-mingcute:close-line" />
             </UButton>
           </div>
-          <UButton @click="addGuestField({ isChild: true })" class="w-fit" outlined label=""
-            >Добавить ребёнка</UButton
-          >
+          <UButton class="w-fit" outlined label="" @click="addGuestField({ isChild: true })">
+            Добавить ребёнка
+          </UButton>
         </div>
       </section>
       <section class="flex flex-col gap-4">
-        <h3 class="text-3xl font-bold">Дополнительная информация</h3>
+        <h3 class="text-3xl font-bold">
+          Дополнительная информация
+        </h3>
         <UTextarea
-          class="max-w-3xl"
           v-model="wishes"
+          class="max-w-3xl"
           placeholder="Напишите свои поделания. Мы постараемся их исполнить"
         />
       </section>
       <section class="flex flex-col gap-4">
-        <h3 class="text-3xl font-bold">Оплата</h3>
+        <h3 class="text-3xl font-bold">
+          Оплата
+        </h3>
         <UTabView class="w-fit">
-          <UTabPanel :pt="{ headerAction: 'pl-0 text-2xl' }"
-            ><template #header>
-              <h4 class="text-bold">При заселении</h4>
+          <UTabPanel :pt="{ headerAction: 'pl-0 text-2xl' }">
+            <template #header>
+              <h4 class="text-bold">
+                При заселении
+              </h4>
             </template>
             <template #default>
               <div class="flex flex-col items-start gap-4">
@@ -246,7 +266,9 @@ const price = ref(6000)
             </template>
           </UTabPanel>
           <UTabPanel :pt="{ headerAction: 'text-2xl' }">
-            <template #header> <h4>Банковской картой</h4> </template>
+            <template #header>
+              <h4>Банковской картой</h4>
+            </template>
             <template #default>
               <div class="flex flex-col items-start gap-4">
                 <span class="font-bold">

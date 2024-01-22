@@ -6,8 +6,8 @@ const props = defineProps<{ room: Room }>()
 
 <template>
   <UGalleria
+    id="u-galleria"
     :value="props.room.images.all"
-    :id="'u-galleria'"
     :pt-options="{ mergeProps: true }"
     :unstyled="true"
     :pt="{
@@ -33,20 +33,20 @@ const props = defineProps<{ room: Room }>()
   >
     <template #item="{ item: image }: { item: RoomImage }">
       <NuxtImg
-        :src="`/images/rooms/${props.room.id}/${image.id}.jpg`"
         :key="image.id"
+        :src="`/images/rooms/${props.room.id}/${image.id}.jpg`"
         class="w-full object-cover"
       />
     </template>
-    <template #previousthumbnailicon></template>
-    <template #indicator="indicator">
-      <div class="w-15 flex h-2 flex-col"></div>
+    <template #previousthumbnailicon />
+    <template #indicator>
+      <div class="h-2 w-15 flex flex-col" />
     </template>
     <template #previousitemicon>
-      <div class="i-mingcute:arrow-left-line text-3xl"></div>
+      <div class="i-mingcute:arrow-left-line text-3xl" />
     </template>
     <template #nextitemicon>
-      <div class="i-mingcute:arrow-right-line text-3xl"></div>
+      <div class="i-mingcute:arrow-right-line text-3xl" />
     </template>
   </UGalleria>
 </template>

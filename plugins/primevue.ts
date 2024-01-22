@@ -1,11 +1,7 @@
 import PrimeVue, { type PrimeVueConfiguration } from 'primevue/config'
-import Lara from '@/presets/lara'
 import 'primevue/resources/themes/lara-light-green/theme.css'
 
-// declare module 'primevue/galleria'
-
-// import {} from 'primevue/galleria/style/galleriastyle.js'
-// import {} from 'primevue/galleria'
+// import Lara from '@/presets/lara'
 
 export default defineNuxtPlugin((app) => {
   app.vueApp.use(PrimeVue, {

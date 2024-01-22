@@ -1,5 +1,6 @@
 import { defineConfig, presetIcons, presetTypography, presetWebFonts, presetWind } from 'unocss'
-import transformerDirectives from '@unocss/transformer-directives'
+
+// import transformerDirectives from '@unocss/transformer-directives'
 
 export default defineConfig({
   presets: [

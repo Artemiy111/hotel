@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const guest = defineModel<{ lastName: string; name: string; middleMane: string }>({
+const guest = defineModel<{ lastName: string, name: string, middleMane: string }>({
   // required: true,
   default: () => ({
     lastName: '',
@@ -11,8 +11,8 @@ const guest = defineModel<{ lastName: string; name: string; middleMane: string }
 
 <template>
   <div class="flex gap-4">
-    <UInputText placeholder="Фамилия" v-model="guest.lastName" />
-    <UInputText placeholder="Имя" v-model="guest.name" />
-    <UInputText placeholder="Отчество" v-model="guest.middleMane" />
+    <UInputText v-model="guest.lastName" placeholder="Фамилия" />
+    <UInputText v-model="guest.name" placeholder="Имя" />
+    <UInputText v-model="guest.middleMane" placeholder="Отчество" />
   </div>
 </template>

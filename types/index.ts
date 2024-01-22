@@ -1,4 +1,4 @@
-export type Room = {
+export interface Room {
   id: string
   title: string
   price: number
@@ -12,6 +12,6 @@ export type Room = {
   }
 }
 
-export type RoomImage = {
+export interface RoomImage {
   id: string
 }
