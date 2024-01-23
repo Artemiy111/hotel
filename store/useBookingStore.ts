@@ -1,5 +1,14 @@
+interface BookingStore {
+  checkIn: Date | null
+  checkOut: Date | null
+  countGuests: {
+    adults: number
+    children: number
+  }
+}
+
 export function useBookingStore() {
-  const bookingStore = useState(
+  const bookingStore = useState<BookingStore>(
     'booking-store',
     () => ({
       checkIn: null,
@@ -8,13 +17,6 @@ export function useBookingStore() {
         adults: 1,
         children: 0,
       },
-    } satisfies {
-      checkIn: Date | null
-      checkOut: Date | null
-      countGuests: {
-        adults: number
-        children: number
-      }
     }),
   )
   return bookingStore
