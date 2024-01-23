@@ -11,6 +11,7 @@ import {
   interval,
   isAfter,
   isBefore,
+  isEqual,
   isSameDay,
   isSameMonth,
   isToday,
@@ -54,6 +55,12 @@ const startAndEndBooking = computed({
   set(newInterval: UCalendarRangeInterval) {
     if (!newInterval) {
       bookingStore.value.checkIn = null
+      bookingStore.value.checkOut = null
+      return
+    }
+
+    if (newInterval[1] && isEqual(newInterval[0], newInterval[1])) {
+      bookingStore.value.checkIn = newInterval[0]
       bookingStore.value.checkOut = null
       return
     }
