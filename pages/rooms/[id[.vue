@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DateBookingPanel from '~/components/DateBookingPanel.vue'
+import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
 import RoomGuestInfo from '~/components/RoomGuestInfo.vue'
 
@@ -110,7 +110,7 @@ const price = ref(6000)
         <h3 class="text-3xl font-bold">
           Заселение
         </h3>
-        <DateBookingPanel :show-button="false" />
+        <BookingPanel :show-button="false" />
       </section>
       <section class="flex flex-col gap-4">
         <h3 class="text-3xl font-bold">

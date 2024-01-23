@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import DateBookingPanel from '~/components/DateBookingPanel.vue'
+import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
 import type { Room } from '~/types'
 
@@ -27,7 +27,7 @@ const { data: rooms, error: _error } = await useFetch('/api/rooms')
     <h1 class="text-4xl text-white font-bold">
       Бронируйте номера в нашем гостевом доме
     </h1>
-    <DateBookingPanel class="rounded-3xl p-10 shadow-lg backdrop-blur-sm backdrop-brightness-75" />
+    <BookingPanel class="rounded-3xl p-10 shadow-lg backdrop-blur-sm backdrop-brightness-75" />
   </section>
   <section id="rooms" class="m-auto mt-20 flex flex-col gap-8 container">
     <h2 class="text-4xl font-bold">
