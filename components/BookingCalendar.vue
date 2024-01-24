@@ -21,9 +21,12 @@ import {
 
 import { useBookingStore } from '~/store/useBookingStore'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   intervalType: 'start' | 'end'
-}>()
+  inputIdPostfix?: string
+}>(), {
+  inputIdPostfix: '',
+})
 
 interface UCalendarDate {
   day: number
@@ -36,10 +39,9 @@ interface UCalendarDate {
 type UCalendarRangeInterval = [Date, Date | null] | null
 
 const bookingStore = useBookingStore()
+
 const now = new Date()
 const startToday = startOfDay(now)
-const startTomorrow = addDays(startToday, 1)
-
 const disabledIntervals: Interval[] = [
   { start: addDays(startToday, 4), end: addDays(startToday, 4) },
   { start: addDays(startToday, 25), end: addDays(startToday, 30) },
@@ -59,24 +61,41 @@ const startAndEndBooking = computed({
       return
     }
 
+    if (!newInterval[1]) {
+      bookingStore.value.checkIn = newInterval[0]
+      bookingStore.value.checkOut = null
+      return
+    }
+
     if (newInterval[1] && isEqual(newInterval[0], newInterval[1])) {
       bookingStore.value.checkIn = newInterval[0]
       bookingStore.value.checkOut = null
       return
     }
 
-    bookingStore.value.checkIn = newInterval[0]
-    bookingStore.value.checkOut = newInterval[1]
+    const normalizedInterlal = interval(newInterval[0], newInterval[1])
+    const shortenedInterfal = shortenToDisabledInterval(normalizedInterlal)
+    bookingStore.value.checkIn = shortenedInterfal.start as Date
+    bookingStore.value.checkOut = shortenedInterfal.end as Date
   },
 })
 
-const inputId = computed(() => `u-calendar-input-${props.intervalType}`)
+function shortenToDisabledInterval(interval: Interval): Interval {
+  const shortenedInterfal = interval
+  for (const disabledInterval of disabledIntervals) {
+    if (areIntervalsOverlapping(shortenedInterfal, disabledInterval))
+      shortenedInterfal.end = disabledInterval.start
+  }
+  return shortenedInterfal
+}
+
+const inputId = computed(() => `u-calendar-input-${props.intervalType}${props.inputIdPostfix}`)
 const inputRef = ref<HTMLInputElement | null>(null)
 onMounted(() => {
   inputRef.value = document.getElementById(inputId.value) as HTMLInputElement
+  updateUcalendarInputText()
 })
-
-onMounted(() => {
+onUpdated(() => {
   updateUcalendarInputText()
 })
 watch(bookingStore, async () => {
@@ -128,7 +147,7 @@ function isExplisitlyDisabledCalendarDate(calendarDate: UCalendarDate): boolean 
 <template>
   <UCalendar
     v-model="(startAndEndBooking as unknown as Date[] | null)"
-    :input-id="`u-calendar-input-${props.intervalType}`"
+    :input-id="inputId"
     :placeholder="props.intervalType === 'start' ? 'Дата заезда' : 'Дата отъезда'"
 
     selection-mode="range"
@@ -141,7 +160,6 @@ function isExplisitlyDisabledCalendarDate(calendarDate: UCalendarDate): boolean 
     :manual-input="false"
     :show-button-bar="true"
     :pt="{
-      input: 'rounded-l-0',
       dayLabel: ({ context: e }) => ({
         class: [{ 'bg-red-200': isExplisitlyDisabledCalendarDate(e.date as unknown as UCalendarDate) }],
       }),

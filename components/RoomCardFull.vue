@@ -2,8 +2,17 @@
 import type { Room } from '~/types'
 import RoomGalleria from '~/components/RoomGalleria.vue'
 
-const props = withDefaults(defineProps<{ room: Room, showButton?: boolean }>(), {
-  showButton: true,
+const props = withDefaults(defineProps<{
+  room: Room
+  button?: {
+    show?: boolean
+    isOutlined?: boolean
+  }
+}>(), {
+  button: () => ({
+    show: true,
+    isOutlined: false,
+  }),
 })
 </script>
 
@@ -25,8 +34,8 @@ const props = withDefaults(defineProps<{ room: Room, showButton?: boolean }>(), 
           {{ condition }}
         </li>
       </ul>
-      <NuxtLink v-if="showButton" :to="`/rooms/${props.room.id}`">
-        <UButton class="w-fit" label="Забронировать" />
+      <NuxtLink v-if="props.button.show" :to="`/rooms/${props.room.id}`">
+        <UButton class="w-fit" label="Забронировать" :outlined="props.button.isOutlined" />
       </NuxtLink>
     </div>
   </div>

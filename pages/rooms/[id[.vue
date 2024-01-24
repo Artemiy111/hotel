@@ -3,11 +3,11 @@ import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
 import RoomGuestInfo from '~/components/RoomGuestInfo.vue'
 
-definePageMeta({
-  validate: async (route) => {
-    return /\w+/.test(route.params.id as string)
-  },
-})
+// definePageMeta({
+//   validate: async (route) => {
+//     return /\w+/.test(route.params.id as string)
+//   },
+// })
 
 interface CheckTimeOption {
   hour: number
@@ -103,7 +103,7 @@ const price = ref(6000)
 
 <template>
   <div v-if="room" class="m-auto container">
-    <RoomCardFull v-if="room" :room="room" :show-button="false" />
+    <RoomCardFull v-if="room" :room="room" :button="{ show: false }" />
     <!-- <RoomGalleria :room="room" /> -->
     <div class="mt-16 flex flex-col gap-16">
       <section class="flex flex-col gap-4">

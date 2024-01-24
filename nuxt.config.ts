@@ -1,4 +1,3 @@
-// import path from 'path'
 import UnoCSS from 'unocss/vite'
 
 export default defineNuxtConfig({
@@ -38,6 +37,5 @@ export default defineNuxtConfig({
     usePrimeVue: false,
     cssLayerOrder: 'reset, primevue, base',
     components: { include: '*', prefix: 'U' },
-    // importPT: { as: 'Lara', from: path.resolve(__dirname, './presets/lara/') },
   },
 })
