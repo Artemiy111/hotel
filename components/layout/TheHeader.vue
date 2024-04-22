@@ -14,8 +14,8 @@ const routes = [
 
 <template>
   <header
-    class="z-100 w-full flex justify-between gap-2 p-4"
-    :class="[isMainPage ? 'fixed left-0 top-0 backdrop-blur-lg backdrop-brightness-75 text-white' : 'mb-8 border-b-2 border-surface-200']"
+    class="z-50 w-full flex justify-between gap-2 p-4"
+    :class="[isMainPage ? 'fixed left-0 top-0 backdrop-blur-lg backdrop-brightness-75 text-white' : 'mb-8 border-b-2 border-secondary']"
   >
     <NuxtLink to="/">
       <span class="font-bold">Отель Ватриго</span>
@@ -34,13 +34,12 @@ const routes = [
 
     <div class="flex gap-4">
       <a class="flex items-center gap-2" href="/">
-        <div class="i-mingcute:telegram-line text-2xl" />
+        <Icon name="mingcute:telegram-line" class="text-2xl" />
       </a>
       <a class="flex items-center gap-2" href="/">
-        <div class="i-mingcute:whatsapp-line text-2xl" />
+        <Icon name="mingcute:whatsapp-line" class="text-2xl" />
       </a>
       <NuxtLink href="tel:+79999999999" class="flex items-center gap-2">
-        <!-- <div class="i-mingcute:phone-line text-xl"></div> -->
         <span>+7 999 999 99 99</span>
       </NuxtLink>
     </div>

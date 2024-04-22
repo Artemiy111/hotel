@@ -159,7 +159,7 @@ const price = ref(6000)
           <div class="flex gap-4">
             <UInputGroup class="w-fit flex">
               <UInputGroupAddon>
-                <div class="i-mingcute:mail-open-line" />
+                <Icon name="mingcute:mail-open-line" />
               </UInputGroupAddon>
               <UInputText
                 v-model="contactInfo.email"
@@ -170,7 +170,7 @@ const price = ref(6000)
             </UInputGroup>
             <UInputGroup class="w-fit flex">
               <UInputGroupAddon>
-                <div class="i-mingcute:phone-line" />
+                <Icon name="mingcute:phone-line" />
               </UInputGroupAddon>
               <UInputText v-model="contactInfo.tel" placeholder="Телефон" type="tel" />
             </UInputGroup>
@@ -200,7 +200,7 @@ const price = ref(6000)
               severity="warning"
               @click="deleteGuestField(index, { isChild: false })"
             >
-              <div class="i-mingcute:close-line" />
+              <Icon name="mingcute:close-line" />
             </UButton>
           </div>
           <UButton class="w-fit" outlined label="" @click="addGuestField({ isChild: false })">
@@ -225,7 +225,7 @@ const price = ref(6000)
               severity="warning"
               @click="deleteGuestField(index, { isChild: true })"
             >
-              <div class="i-mingcute:close-line" />
+              <Icon name="mingcute:close-line" />
             </UButton>
           </div>
           <UButton class="w-fit" outlined label="" @click="addGuestField({ isChild: true })">

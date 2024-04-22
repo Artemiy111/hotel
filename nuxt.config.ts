@@ -1,28 +1,18 @@
-import UnoCSS from 'unocss/vite'
-
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: [
-    'nuxt-primevue',
     '@nuxt/image',
-    // '@nuxtjs/eslint-module',
+    '@nuxtjs/tailwindcss',
+    '@nuxt/eslint',
+    'nuxt-primevue',
+    'nuxt-icon',
   ],
-  css: ['@/assets/css/main.css'],
-  postcss: {
-    plugins: { '@unocss/postcss': {} },
-  },
   imports: { autoImport: true },
   components: {
     dirs: [],
   },
-  vite: {
-    plugins: [UnoCSS()],
-  },
-  // eslint: {
-  //   useEslintrc: false,
-  // },
   image: {
-    format: ['avif', 'webp', 'jpeg'],
+    format: ['avif', 'webp', 'png', 'jpeg'],
     screens: {
       'xs': 320,
       'sm': 640,
@@ -34,8 +24,8 @@ export default defineNuxtConfig({
   },
 
   primevue: {
-    usePrimeVue: false,
-    cssLayerOrder: 'reset, primevue, base',
+    usePrimeVue: true,
+    // cssLayerOrder: 'reset, primevue, base',
     components: { include: '*', prefix: 'U' },
   },
 })

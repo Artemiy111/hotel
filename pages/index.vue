@@ -28,7 +28,7 @@ watch(error, () => {
 
 <template>
   <div class="">
-    <section id="start-screen" class="relative h-100dvh flex flex-col items-center justify-center gap-10">
+    <section id="start-screen" class="relative h-dvh flex flex-col items-center justify-center gap-10">
       <NuxtImg src="/images/hotel-screen.jpg" class="absolute z--1 h-full w-full" />
       <h1 class="text-4xl text-white font-bold">
         Бронируйте номера в нашем гостевом доме

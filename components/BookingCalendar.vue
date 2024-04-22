@@ -7,16 +7,11 @@ import {
   areIntervalsOverlapping,
   eachDayOfInterval,
   format,
-  getDate,
   interval,
   isAfter,
   isBefore,
   isEqual,
-  isSameDay,
-  isSameMonth,
-  isToday,
   startOfDay,
-  startOfMonth,
 } from 'date-fns'
 
 import { useBookingStore } from '~/store/useBookingStore'
@@ -73,10 +68,10 @@ const startAndEndBooking = computed({
       return
     }
 
-    const normalizedInterlal = interval(newInterval[0], newInterval[1])
-    const shortenedInterfal = shortenToDisabledInterval(normalizedInterlal)
-    bookingStore.value.checkIn = shortenedInterfal.start as Date
-    bookingStore.value.checkOut = shortenedInterfal.end as Date
+    const normalizedInternal = interval(newInterval[0], newInterval[1])
+    const shortenedInfernal = shortenToDisabledInterval(normalizedInternal)
+    bookingStore.value.checkIn = shortenedInfernal.start as Date
+    bookingStore.value.checkOut = shortenedInfernal.end as Date
   },
 })
 
@@ -91,17 +86,21 @@ function shortenToDisabledInterval(interval: Interval): Interval {
 
 const inputId = computed(() => `u-calendar-input-${props.intervalType}${props.inputIdPostfix}`)
 const inputRef = ref<HTMLInputElement | null>(null)
+
 onMounted(() => {
   inputRef.value = document.getElementById(inputId.value) as HTMLInputElement
-  updateUcalendarInputText()
+  updateUCalendarInputText()
 })
+
 onUpdated(() => {
-  updateUcalendarInputText()
+  updateUCalendarInputText()
 })
+
 watch(bookingStore, async () => {
-  updateUcalendarInputText()
+  updateUCalendarInputText()
 }, { deep: true, immediate: true, flush: 'post' })
-function updateUcalendarInputText() {
+
+function updateUCalendarInputText() {
   if (!inputRef.value)
     return
 
@@ -135,7 +134,7 @@ function isAfterMaxDate(date: Date) {
   return isAfter(date, startMaxDate)
 }
 
-function isExplisitlyDisabledCalendarDate(calendarDate: UCalendarDate): boolean {
+function isExplicitlyDisabledCalendarDate(calendarDate: UCalendarDate): boolean {
   const date = fromCalendarDateToDate(calendarDate)
 
   if (calendarDate.otherMonth || isBeforeMinDate(date) || isAfterMaxDate(date))
@@ -149,8 +148,8 @@ function isExplisitlyDisabledCalendarDate(calendarDate: UCalendarDate): boolean 
     v-model="(startAndEndBooking as unknown as Date[] | null)"
     :input-id="inputId"
     :placeholder="props.intervalType === 'start' ? 'Дата заезда' : 'Дата отъезда'"
-
     selection-mode="range"
+
     view="date"
     :disabled-dates="disabledDates"
     :min-date="startMinDate"
@@ -161,16 +160,17 @@ function isExplisitlyDisabledCalendarDate(calendarDate: UCalendarDate): boolean 
     :show-button-bar="true"
     :pt="{
       dayLabel: ({ context: e }) => ({
-        class: [{ 'bg-red-200': isExplisitlyDisabledCalendarDate(e.date as unknown as UCalendarDate) }],
+        class: [{ 'bg-red-200': isExplicitlyDisabledCalendarDate(e.date as unknown as UCalendarDate) }],
       }),
 
     }"
     :pt-options="{ mergeProps: true }"
+    @click="updateUCalendarInputText"
   >
     <template #date="{ date }">
       <span
-        v-if="isExplisitlyDisabledCalendarDate(date)"
-        v-tooltip="{ value: 'Уже забронированно', pt: { text: 'whitespace-nowrap w-max' } }"
+        v-if="isExplicitlyDisabledCalendarDate(date)"
+        v-tooltip="{ value: 'Уже забронировано', pt: { text: 'whitespace-nowrap w-max' } }"
         :data-pc-ripple="false"
         class="focus:unset pointer-events-auto bg-red-200"
       >

@@ -13,11 +13,11 @@ const guestsSelectionText = computed(() =>
 <template>
   <form class="flex gap-2" @submit.prevent>
     <UInputGroup class="w-fit flex">
-      <UInputGroupAddon><div class="i-mingcute:calendar-month-line" /></UInputGroupAddon>
+      <UInputGroupAddon><Icon name="mingcute:calendar-month-line" /></UInputGroupAddon>
       <BookingCalendar interval-type="start" />
     </UInputGroup>
     <UInputGroup class="w-fit flex">
-      <UInputGroupAddon><div class="i-mingcute:calendar-month-line" /></UInputGroupAddon>
+      <UInputGroupAddon><Icon name="mingcute:calendar-month-line" /></UInputGroupAddon>
       <BookingCalendar interval-type="end" />
     </UInputGroup>
     <UDropdown v-model="guestsSelectionText" :placeholder="guestsSelectionText" :pt="{ root: 'w-max', input: 'text-clip text-surface-800', panel: 'mt-4' }">

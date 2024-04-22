@@ -43,10 +43,10 @@ const props = defineProps<{ room: Room }>()
       <div class="h-2 w-15 flex flex-col" />
     </template>
     <template #previousitemicon>
-      <div class="i-mingcute:arrow-left-line text-3xl" />
+      <Icon name="mingcute:arrow-left-line" class="text-3xl" />
     </template>
     <template #nextitemicon>
-      <div class="i-mingcute:arrow-right-line text-3xl" />
+      <Icon name="mingcute:arrow-right-line" class="text-3xl" />
     </template>
   </UGalleria>
 </template>
