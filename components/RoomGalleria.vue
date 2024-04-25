@@ -1,52 +1,59 @@
 <script setup lang="ts">
-import type { Room, RoomImage } from '~/types'
+import type { CarouselApi } from './ui/carousel'
+import type { Room } from '~/types'
 
 const props = defineProps<{ room: Room }>()
+
+const carouselApi = ref<CarouselApi | null>(null)
+const currentSlide = ref(0)
+
+watch(carouselApi, () => {
+  if (!carouselApi.value)
+    return
+
+  carouselApi.value.on('select', (api) => {
+    selectSlide(api.selectedScrollSnap())
+  })
+}, { once: true })
+
+function selectSlide(index: number) {
+  currentSlide.value = index
+  if (carouselApi.value)
+    carouselApi.value.scrollTo(index)
+}
 </script>
 
 <template>
-  <UGalleria
-    id="u-galleria"
-    :value="props.room.images.all"
-    :pt-options="{ mergeProps: true }"
-    :unstyled="true"
-    :pt="{
-      root: 'rounded-xl overflow-clip',
-      content: '',
-      itemWrapper: 'relative flex w-full  flex-col items-center',
-      itemContainer: 'relative w-full',
-      item: 'flex aspect-video justify-center',
-      previousItemButton:
-        'color-white translate-y--50% hover:color-primary-300 active:color-primary-500 absolute top-50% flex aspect-square backdrop-blur-sm w-12 justify-center rounded-full items-center backdrop-brightness-75 left-2 cursor-pointer',
-      nextItemButton:
-        'color-white translate-y--50% hover:color-primary-300 active:color-primary-500 absolute top-50% flex aspect-square backdrop-blur-sm w-12 justify-center rounded-full items-center backdrop-brightness-75 right-2 cursor-pointer',
-      indicators:
-        'absolute p-4 flex bottom-0 w-max justify-center gap-4 backdrop-blur-sm backdrop-brightness-75 rounded-t-xl',
-      indicator: '[&[data-p-highlight=true]]:bg-primary-500 bg-white cursor-pointer rounded-sm',
+  <Carousel
+    class="w-full h-fit"
+    :opts="{
+      loop: true,
+
     }"
-    :change-item-on-indicator-hover="true"
-    :show-thumbnails="false"
-    show-indicators
-    show-item-navigators
-    circular
-    auto-play
+    @init-api="carouselApi = $event"
   >
-    <template #item="{ item: image }: { item: RoomImage }">
-      <NuxtImg
-        :key="image.id"
-        :src="`/images/rooms/${props.room.id}/${image.id}.jpg`"
-        class="w-full object-cover"
-      />
-    </template>
-    <template #previousthumbnailicon />
-    <template #indicator>
-      <div class="h-2 w-15 flex flex-col" />
-    </template>
-    <template #previousitemicon>
-      <Icon name="mingcute:arrow-left-line" class="text-3xl" />
-    </template>
-    <template #nextitemicon>
-      <Icon name="mingcute:arrow-right-line" class="text-3xl" />
-    </template>
-  </UGalleria>
+    <CarouselContent class="flex w-full items-center">
+      <CarouselItem
+        v-for="img in props.room.images.all"
+        :key="img.id"
+        class="flex items-center justify-center"
+      >
+        <NuxtImg
+          :src="`/images/rooms/${props.room.id}/${img.id}.jpg`"
+          format="avif,webp,png,jpg"
+          class="aspect-video w-full object-cover"
+        />
+      </CarouselItem>
+    </CarouselContent>
+    <div class="absolute bottom-0 left-0 w-full">
+      <div class="flex mx-auto gap-4 w-fit rounded-t-lg justify-center p-4 bg-black/30">
+        <div
+          v-for="n in props.room.images.all.length" :key="n"
+          class="w-10 h-2  cursor-pointer rounded-full"
+          :class="n - 1 === currentSlide ? 'bg-black' : 'bg-white'"
+          @click="selectSlide(n - 1)"
+        />
+      </div>
+    </div>
+  </Carousel>
 </template>

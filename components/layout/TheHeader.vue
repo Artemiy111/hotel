@@ -8,13 +8,13 @@ const routes = [
     title: 'Главная',
     link: '/',
   },
-  { title: 'Номера', link: '/rooms/find' },
+  { title: 'Номера', link: '/find' },
 ]
 </script>
 
 <template>
   <header
-    class="z-50 w-full flex justify-between gap-2 p-4"
+    class="z-50 w-full flex justify-between gap-2 p-4 "
     :class="[isMainPage ? 'fixed left-0 top-0 backdrop-blur-lg backdrop-brightness-75 text-white' : 'mb-8 border-b-2 border-secondary']"
   >
     <NuxtLink to="/">

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { VisuallyHidden } from 'radix-vue'
 import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCard from '~/components/RoomCard.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
 import type { Room } from '~/types'
+import { useToast } from '~/components/ui/toast'
 
 const cardDialogInfo = ref<Room | null>(null)
 const isCardDialogVisible = ref(false)
@@ -22,7 +24,8 @@ const toast = useToast()
 watch(error, () => {
   if (error)
     return
-  toast.add({ severity: 'error', summary: 'Ошибка', detail: 'Не удалось загрузить информацию о номерах', group: 'br', life: 10000 })
+
+  toast.toast({ variant: 'destructive', title: 'Ошибка', description: 'Не удалось загрузить информацию о номерах' })
 })
 </script>
 
@@ -40,26 +43,25 @@ watch(error, () => {
         Номера
       </h2>
       <div class="grid grid-cols-3 gap-5">
-        <RoomCard v-for="room in rooms" :key="room.id" :room="room" @click:card-body="openCardDialog(room)" />
+        <RoomCard v-for="room in rooms" :key="room.id" :room="room" class="cursor-pointer" @click="openCardDialog(room)" />
       </div>
     </section>
-    <UDialog
-      v-model:visible="isCardDialogVisible"
-      modal
-      :closable="false"
-      :dismissable-mask="true"
-      :show-header="false"
-      :pt="{ root: 'w-95dvw', content: '', mask: 'backdrop-brightness-75' }"
-      :pt-options="{ mergeProps: false, mergeSections: true }"
-    >
-      <template #container>
+    <Dialog v-model:open="isCardDialogVisible">
+      <DialogContent as-child class="flex max-w-full">
         <RoomCardFull
           v-if="cardDialogInfo"
-          class="border-2 border-surface-200 rounded-xl bg-white p-8"
+          class="w-[80dvw]"
           :room="cardDialogInfo"
         />
-      </template>
-    </UDialog>
+        <VisuallyHidden>
+          <DialogHeader>
+            <DialogTitle>Комната</DialogTitle>
+            <DialogDescription>Комната</DialogDescription>
+          </DialogHeader>
+        </VisuallyHidden>
+      </DialogContent>
+    </Dialog>
+    >
 
     <section class="m-auto mt-20 flex flex-col gap-8 container">
       <div class="flex flex-col gap-4">

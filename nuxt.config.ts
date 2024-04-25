@@ -4,13 +4,15 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxtjs/tailwindcss',
     '@nuxt/eslint',
-    'nuxt-primevue',
+    'shadcn-nuxt',
     'nuxt-icon',
+    '@pinia/nuxt',
   ],
   imports: { autoImport: true },
   components: {
     dirs: [],
   },
+
   image: {
     format: ['avif', 'webp', 'png', 'jpeg'],
     screens: {
@@ -23,9 +25,4 @@ export default defineNuxtConfig({
     },
   },
 
-  primevue: {
-    usePrimeVue: true,
-    // cssLayerOrder: 'reset, primevue, base',
-    components: { include: '*', prefix: 'U' },
-  },
 })

@@ -35,7 +35,9 @@ const props = withDefaults(defineProps<{
         </li>
       </ul>
       <NuxtLink v-if="props.button.show" :to="`/rooms/${props.room.id}`">
-        <UButton class="w-fit" label="Забронировать" :outlined="props.button.isOutlined" />
+        <Button class="w-fit" :variant="props.button.isOutlined ? 'outline' : 'default'">
+          Забронировать
+        </Button>
       </NuxtLink>
     </div>
   </div>
