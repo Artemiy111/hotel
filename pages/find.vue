@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Frown } from 'lucide-vue-next'
 import { type BedType, type RoomOption, BED_TYPES, ROOM_OPTIONS } from '~/constants'
 import BookingCalendarButton from '~/components/BookingCalendarButton.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
@@ -26,6 +27,28 @@ const bedsCount = ref<BeadsCount>('does-not-matter')
 const roomOptions = ref<RoomOption[]>([])
 
 const filteredRooms = computed(() => {
+  if (!rooms.value) return null
+  return rooms.value.filter((room) => {
+    const guestsCountFilter = bookingStore.countGuests <= room.conditions.maxGuests
+    const priceFilter = priceRange.value[0] <= room.price && room.price <= priceRange.value[1]
+    const squareFilter = roomSquareRange.value[0] <= room.conditions.square && room.conditions.square <= roomSquareRange.value[1]
+
+    const bedsCountFilter = bedsCount.value === 'does-not-matter'
+      || Number(bedsCount.value) <= room.conditions.beds.double + room.conditions.beds.single
+
+    const bedsTypesFilter = bedTypes.value.filter((type) => {
+      if (type === 'double') return room.conditions.beds.double > 0
+      else if (type === 'separate') return room.conditions.beds.single > 0
+      return true
+    }).length === bedTypes.value.length
+
+    const optionsFilter = roomOptions.value.filter(
+      option => room.conditions.options.includes(option),
+    ).length
+    === roomOptions.value.length
+
+    return guestsCountFilter && priceFilter && squareFilter && bedsTypesFilter && bedsCountFilter && optionsFilter
+  })
 })
 </script>
 
@@ -71,7 +94,10 @@ const filteredRooms = computed(() => {
               else bedTypes = bedTypes.filter(b => b !== bedKey)
             } "
           />
-          <Label :for="`bed-type-${bedKey}`">{{ bed.title }}</Label>
+          <Label
+            :for="`bed-type-${bedKey}`"
+            class="cursor-pointer"
+          >{{ bed.title }}</Label>
         </div>
       </div>
 
@@ -87,7 +113,10 @@ const filteredRooms = computed(() => {
               :id="`beds-count-${countString}`"
               :value="countString"
             />
-            <Label :for="`beds-count-${countString}`">{{ countString === 'does-not-matter' ? 'Не важно' : countString }}</Label>
+            <Label
+              :for="`beds-count-${countString}`"
+              class="cursor-pointer"
+            >{{ countString === 'does-not-matter' ? 'Не важно' : countString }}  </Label>
           </div>
         </RadioGroup>
       </div>
@@ -108,17 +137,31 @@ const filteredRooms = computed(() => {
               else roomOptions = roomOptions.filter(b => b !== optionKey)
             } "
           />
-          <Label :for="`room-option-${optionKey}`">{{ option.title }}</Label>
+          <Label
+            :for="`room-option-${optionKey}`"
+            class="cursor-pointer"
+          >{{ option.title }}</Label>
         </div>
       </div>
     </aside>
     <section class="flex flex-col gap-8">
-      <RoomCardFull
-        v-for="room in rooms"
-        :key="room.id"
-        :room="room"
-        :button="{ show: true, isOutlined: true }"
-      />
+      <template v-if="filteredRooms?.length">
+        <RoomCardFull
+          v-for="room in filteredRooms"
+          :key="room.id"
+          :room="room"
+          :button="{ show: true, isOutlined: true }"
+        />
+      </template>
+      <template v-else>
+        <div class="w-full flex flex-col gap-4 justify-center items-center px-4 h-[40dvh] bg-primary-foreground">
+          <Frown
+            :size="50"
+            :stroke-width="1.5"
+          />
+          <span class="text-base"> Нет подходящих номеров</span>
+        </div>
+      </template>
     </section>
   </div>
 </template>

@@ -7,7 +7,7 @@ export const rooms: Room[] = [
     price: 1200,
     bookedDateRanges: [],
     conditions: {
-      maxPersons: 2,
+      maxGuests: 2,
       square: 15,
       beds: {
         double: 2,
@@ -26,7 +26,7 @@ export const rooms: Room[] = [
     price: 1500,
     bookedDateRanges: [],
     conditions: {
-      maxPersons: 3,
+      maxGuests: 3,
       square: 20,
       beds: {
         double: 2,
@@ -45,7 +45,7 @@ export const rooms: Room[] = [
     price: 2000,
     bookedDateRanges: [],
     conditions: {
-      maxPersons: 4,
+      maxGuests: 4,
       square: 40,
       beds: {
         double: 2,

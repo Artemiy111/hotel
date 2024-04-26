@@ -8,7 +8,7 @@ export interface Room {
   price: number
   bookedDateRanges: []
   conditions: {
-    maxPersons: number
+    maxGuests: number
     square: number
     beds: {
       double: number

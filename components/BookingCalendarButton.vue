@@ -7,15 +7,18 @@ import {
 } from '@internationalized/date'
 
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
-import { type DateRange, RangeCalendarRoot } from 'radix-vue'
+import { type DateRange } from 'radix-vue'
 import { RangeCalendar } from '@/components/ui/range-calendar'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '~/lib/utils'
+import { useBookingStore } from '~/store/booking'
 
 const props = defineProps<{
   class?: HTMLAttributes['class']
 }>()
+
+const bookingStore = useBookingStore()
 
 const df = new DateFormatter('ru-RU', {
   dateStyle: 'medium',
@@ -25,6 +28,13 @@ const value = ref({
   start: new CalendarDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
   end: new CalendarDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
 }) as Ref<DateRange>
+
+const timeZone = getLocalTimeZone()
+
+watch(() => value.value, (value) => {
+  bookingStore.checkIn = value.start?.toDate(timeZone) || null
+  bookingStore.checkOut = value.end?.toDate(timeZone) || null
+}, { deep: true, immediate: true })
 </script>
 
 <template>
@@ -40,11 +50,11 @@ const value = ref({
         <CalendarIcon class="mr-2 h-4 w-4" />
         <template v-if="value.start">
           <template v-if="value.end">
-            {{ df.format(value.start.toDate(getLocalTimeZone())) }} - {{ df.format(value.end.toDate(getLocalTimeZone())) }}
+            {{ df.format(value.start.toDate(timeZone)) }} - {{ df.format(value.end.toDate(timeZone)) }}
           </template>
 
           <template v-else>
-            {{ df.format(value.start.toDate(getLocalTimeZone())) }}
+            {{ df.format(value.start.toDate(timeZone)) }}
           </template>
         </template>
         <template v-else>
@@ -53,7 +63,13 @@ const value = ref({
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0">
-      <RangeCalendar v-model="value" locale="ru-RU" initial-focus :number-of-months="2" @update:start-value="(startDate) => value.start = startDate" />
+      <RangeCalendar
+        v-model="value"
+        locale="ru-RU"
+        initial-focus
+        :number-of-months="2"
+        @update:start-value="(startDate) => value.start = startDate"
+      />
     </PopoverContent>
   </Popover>
 </template>

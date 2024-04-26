@@ -37,7 +37,7 @@ const props = withDefaults(defineProps<{
         </div>
         <div class="flex gap-2">
           <Users />
-          <span>{{ props.room.conditions.maxPersons }}</span>
+          <span>{{ props.room.conditions.maxGuests }}</span>
         </div>
         <div
           v-if="props.room.conditions.beds.double"
