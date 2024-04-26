@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Ref, ref } from 'vue'
+import type { HTMLAttributes, Ref } from 'vue'
 import {
   CalendarDate,
   DateFormatter,
@@ -12,6 +12,10 @@ import { RangeCalendar } from '@/components/ui/range-calendar'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '~/lib/utils'
+
+const props = defineProps<{
+  class?: HTMLAttributes['class']
+}>()
 
 const df = new DateFormatter('ru-RU', {
   dateStyle: 'medium',
@@ -30,7 +34,7 @@ const value = ref({
         variant="outline"
         :class="cn(
           'w-[280px] justify-start text-left font-normal',
-          !value && 'text-muted-foreground',
+          !value && 'text-muted-foreground', props.class,
         )"
       >
         <CalendarIcon class="mr-2 h-4 w-4" />

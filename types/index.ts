@@ -1,12 +1,20 @@
+import type { BedType, RoomOption } from '~/constants'
+
+export type { BedType, RoomOption }
+
 export interface Room {
   id: string
   title: string
   price: number
+  bookedDateRanges: []
   conditions: {
-    maxAdults: number
-    maxChildren: number
+    maxPersons: number
     square: number
-    other: string[]
+    beds: {
+      double: number
+      single: number
+    }
+    options: RoomOption[]
   }
   images: {
     preview: RoomImage

@@ -12,7 +12,11 @@ export default defineNuxtConfig({
   components: {
     dirs: [],
   },
-
+  eslint: {
+    config: {
+      stylistic: true,
+    },
+  },
   image: {
     format: ['avif', 'webp', 'png', 'jpeg'],
     screens: {

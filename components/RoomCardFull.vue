@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { Box, Users, BedDouble, BedSingle } from 'lucide-vue-next'
 import type { Room } from '~/types'
+import { ROOM_OPTIONS } from '~/constants'
 import RoomGalleria from '~/components/RoomGalleria.vue'
 
 const props = withDefaults(defineProps<{
@@ -19,26 +21,59 @@ const props = withDefaults(defineProps<{
 <template>
   <div class="grid grid-cols-[2fr_1fr] gap-8 overflow-clip">
     <RoomGalleria :room="props.room" />
-    <div class="flex flex-col gap-6">
+    <section class="flex flex-col gap-6">
       <div class="flex flex-col gap-1">
-        <h3 class="text-4xl font-bold">
+        <h3 class="text-3xl font-bold">
           {{ props.room.title }}
         </h3>
-        <p class="text-2xl text-primary-500 font-bold">
+        <span class="text-xl text-slate-500 font-bold">
           от {{ props.room.price }}р ночь
-        </p>
+        </span>
       </div>
+      <div class="grid gap-4 grid-cols-[max-content,max-content]">
+        <div class="flex gap-2">
+          <Box />
+          <span>{{ props.room.conditions.square }} м<sup>2</sup></span>
+        </div>
+        <div class="flex gap-2">
+          <Users />
+          <span>{{ props.room.conditions.maxPersons }}</span>
+        </div>
+        <div
+          v-if="props.room.conditions.beds.double"
+          class="flex gap-2"
+        >
+          <BedDouble />
+          <span>{{ props.room.conditions.beds.double }}</span>
+        </div>
+        <div
+          v-if="props.room.conditions.beds.single"
+          class="flex gap-2"
+        >
+          <BedSingle />
+          <span>{{ props.room.conditions.beds.single }}</span>
+        </div>
+      </div>
+
       <ul class="flex flex-col gap-2">
-        <li>{{ props.room.conditions.square }} м<sup>2</sup></li>
-        <li v-for="condition in props.room.conditions.other" :key="condition">
-          {{ condition }}
+        <li
+          v-for="option in props.room.conditions.options"
+          :key="option"
+        >
+          {{ ROOM_OPTIONS[option].title }}
         </li>
       </ul>
-      <NuxtLink v-if="props.button.show" :to="`/rooms/${props.room.id}`">
-        <Button class="w-fit" :variant="props.button.isOutlined ? 'outline' : 'default'">
+      <NuxtLink
+        v-if="props.button.show"
+        :to="`/rooms/${props.room.id}`"
+      >
+        <Button
+          class="w-fit"
+          :variant="props.button.isOutlined ? 'outline' : 'default'"
+        >
           Забронировать
         </Button>
       </NuxtLink>
-    </div>
+    </section>
   </div>
 </template>

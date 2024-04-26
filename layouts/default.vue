@@ -6,7 +6,6 @@ import TheFooter from '~/components/layout/TheFooter.vue'
 
 <template>
   <div class="">
-    <UToast position="bottom-right" group="br" :pt="{ content: 'border-0' }" />
     <TheHeader />
     <TheMain> <slot /> </TheMain>
     <TheFooter />

@@ -5,11 +5,15 @@ export const rooms: Room[] = [
     id: '1',
     title: 'Обычный',
     price: 1200,
+    bookedDateRanges: [],
     conditions: {
-      maxAdults: 2,
-      maxChildren: 2,
-      square: 10,
-      other: ['Wi-Fi', 'Двуспальная кровать'],
+      maxPersons: 2,
+      square: 15,
+      beds: {
+        double: 2,
+        single: 0,
+      },
+      options: ['has-safe', 'has-shower'],
     },
     images: {
       preview: { id: '1' },
@@ -20,11 +24,15 @@ export const rooms: Room[] = [
     id: '2',
     title: 'Люкс',
     price: 1500,
+    bookedDateRanges: [],
     conditions: {
-      maxAdults: 2,
-      maxChildren: 3,
+      maxPersons: 3,
       square: 20,
-      other: ['Wi-Fi', 'Двуспальная кровать', 'Сейф'],
+      beds: {
+        double: 2,
+        single: 1,
+      },
+      options: ['has-safe', 'has-conditioner', 'has-shower'],
     },
     images: {
       preview: { id: '2' },
@@ -35,11 +43,15 @@ export const rooms: Room[] = [
     id: '3',
     title: 'Делюкс',
     price: 2000,
+    bookedDateRanges: [],
     conditions: {
-      maxAdults: 4,
-      maxChildren: 6,
-      square: 25,
-      other: ['Wi-Fi', 'Двуспальная кровать', 'Сейф', 'Душевая кабина', 'Кондиционер'],
+      maxPersons: 4,
+      square: 40,
+      beds: {
+        double: 2,
+        single: 2,
+      },
+      options: ['has-safe', 'has-conditioner', 'has-tub'],
     },
     images: {
       preview: { id: '4' },

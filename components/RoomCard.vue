@@ -18,7 +18,13 @@ const props = defineProps<{ room: Room }>()
         {{ props.room.title }}
       </h6>
       <span class="mt-3"> {{ room.price }}р ночь</span>
-      <Button class="mt-3 w-max" variant="secondary" size="sm" label="" outlined>
+      <Button
+        class="mt-3 w-max"
+        variant="secondary"
+        size="sm"
+        label=""
+        outlined
+      >
         Подробнее
       </Button>
     </div>
