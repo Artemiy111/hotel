@@ -11,7 +11,11 @@ const props = withDefaults(defineProps<{ showButton?: boolean }>(), { showButton
   <div class="flex gap-4">
     <BookingCalendarButton />
     <BookingGuestsCountButton />
-    <NuxtLink v-if="props.showButton" to="/find" :class="buttonVariants()">
+    <NuxtLink
+      v-if="props.showButton"
+      to="/find"
+      :class="buttonVariants()"
+    >
       Найти
     </NuxtLink>
   </div>

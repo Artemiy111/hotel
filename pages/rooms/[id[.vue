@@ -3,11 +3,6 @@ import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
 import RoomGuestInfo from '~/components/RoomGuestInfo.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
-// definePageMeta({
-//   validate: async (route) => {
-//     return /\w+/.test(route.params.id as string)
-//   },
-// })
 
 interface TimeOption {
   hour: number
@@ -111,9 +106,15 @@ const tab = ref<'1' | '2'>('1')
 </script>
 
 <template>
-  <div v-if="room" class="m-auto container">
-    <RoomCardFull v-if="room" :room="room" :button="{ show: false }" />
-    <!-- <RoomGalleria :room="room" /> -->
+  <div
+    v-if="room"
+    class="m-auto container"
+  >
+    <RoomCardFull
+      v-if="room"
+      :room="room"
+      :button="{ show: false }"
+    />
     <div class="mt-16 flex flex-col gap-16">
       <section class="flex flex-col gap-4">
         <h3 class="text-3xl font-bold">
@@ -136,11 +137,18 @@ const tab = ref<'1' | '2'>('1')
             :model-value="JSON.stringify(checkInTime)"
             @update:model-value="(timeString) => checkInTime = JSON.parse(timeString) "
           >
-            <SelectTrigger id="check-in-time" class="w-max">
+            <SelectTrigger
+              id="check-in-time"
+              class="w-max"
+            >
               <SelectValue>{{ timeToString(checkInTime) }}</SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="time in checkInTimeOptions" :key="time.toString()" :value="JSON.stringify(time)">
+              <SelectItem
+                v-for="time in checkInTimeOptions"
+                :key="time.toString()"
+                :value="JSON.stringify(time)"
+              >
                 {{ timeToString(time) }}
               </SelectItem>
             </SelectContent>
@@ -150,11 +158,18 @@ const tab = ref<'1' | '2'>('1')
             :model-value="JSON.stringify(checkOutTime)"
             @update:model-value="(timeString) => checkOutTime = JSON.parse(timeString) "
           >
-            <SelectTrigger id="check-out-time" class="w-max">
+            <SelectTrigger
+              id="check-out-time"
+              class="w-max"
+            >
               <SelectValue>{{ timeToString(checkOutTime) }}</SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem v-for="time in checkOutTimeOptions" :key="time.toString()" :value="JSON.stringify(time)">
+              <SelectItem
+                v-for="time in checkOutTimeOptions"
+                :key="time.toString()"
+                :value="JSON.stringify(time)"
+              >
                 {{ timeToString(time) }}
               </SelectItem>
             </SelectContent>
@@ -191,7 +206,12 @@ const tab = ref<'1' | '2'>('1')
             </div>
 
             <div class="relative w-full max-w-sm items-center">
-              <Input v-model="contactInfo.tel" placeholder="Телефон" type="tel" class="pl-10" />
+              <Input
+                v-model="contactInfo.tel"
+                placeholder="Телефон"
+                type="tel"
+                class="pl-10"
+              />
               <div class="absolute start-0 inset-y-0 flex items-center justify-center px-3">
                 <Icon name="mingcute:phone-line" />
               </div>
@@ -212,8 +232,15 @@ const tab = ref<'1' | '2'>('1')
           />
         </div>
         <div class="flex flex-col gap-4">
-          <RoomGuestInfo v-show="!isBookingForAnotherPerson" v-model="contactInfo.guest" />
-          <div v-for="(guest, index) in guests" :key="guest.toString()" class="flex gap-4">
+          <RoomGuestInfo
+            v-show="!isBookingForAnotherPerson"
+            v-model="contactInfo.guest"
+          />
+          <div
+            v-for="(guest, index) in guests"
+            :key="guest.toString()"
+            class="flex gap-4"
+          >
             <RoomGuestInfo v-model="guests[index]" />
             <Button
               variant="outline"
@@ -223,16 +250,30 @@ const tab = ref<'1' | '2'>('1')
               <Icon name="mingcute:close-line" />
             </Button>
           </div>
-          <Button class="w-fit" variant="outline" @click="addGuestField({ isChild: false })">
+          <Button
+            class="w-fit"
+            variant="outline"
+            @click="addGuestField({ isChild: false })"
+          >
             Добавить гостя
           </Button>
         </div>
         <div class="flex items-center gap-4">
           <Label for="have-children">Дети</Label>
-          <Checkbox id="have-children" v-model:checked="haveChildren" />
+          <Checkbox
+            id="have-children"
+            v-model:checked="haveChildren"
+          />
         </div>
-        <div v-if="haveChildren" class="flex flex-col gap-4">
-          <div v-for="(child, index) in children" :key="child.toString()" class="flex gap-4">
+        <div
+          v-if="haveChildren"
+          class="flex flex-col gap-4"
+        >
+          <div
+            v-for="(child, index) in children"
+            :key="child.toString()"
+            class="flex gap-4"
+          >
             <RoomGuestInfo v-model="children[index]" />
             <Select
               :model-value="children[index].age.toString()"
@@ -242,7 +283,11 @@ const tab = ref<'1' | '2'>('1')
                 <SelectValue>{{ child.age }}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem v-for="age in childAgeOptions" :key="age" :value="age.toString()">
+                <SelectItem
+                  v-for="age in childAgeOptions"
+                  :key="age"
+                  :value="age.toString()"
+                >
                   {{ age }}
                 </SelectItem>
               </SelectContent>
@@ -256,7 +301,11 @@ const tab = ref<'1' | '2'>('1')
               <Icon name="mingcute:close-line" />
             </Button>
           </div>
-          <Button class="w-fit" variant="outline" @click="addGuestField({ isChild: true })">
+          <Button
+            class="w-fit"
+            variant="outline"
+            @click="addGuestField({ isChild: true })"
+          >
             Добавить ребёнка
           </Button>
         </div>
@@ -289,7 +338,10 @@ const tab = ref<'1' | '2'>('1')
               </h4>
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="1" class="">
+          <TabsContent
+            value="1"
+            class=""
+          >
             <div class="flex flex-col gap-4 max-w-lg">
               <p>
                 Выбирая этот способ оплаты, вы не вносите предоплату за бронь. Получите
@@ -301,7 +353,10 @@ const tab = ref<'1' | '2'>('1')
               </Button>
             </div>
           </TabsContent>
-          <TabsContent value="2" class="">
+          <TabsContent
+            value="2"
+            class=""
+          >
             <div class="flex flex-col gap-4 max-w-lg">
               <p>
                 Оплачивается вся сумма брони. Данный способ оплаты поддерживает платежи только с

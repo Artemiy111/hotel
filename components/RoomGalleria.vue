@@ -48,7 +48,8 @@ function selectSlide(index: number) {
     <div class="absolute bottom-0 left-0 w-full">
       <div class="flex mx-auto gap-4 w-fit rounded-t-lg justify-center p-4 bg-black/30">
         <div
-          v-for="n in props.room.images.all.length" :key="n"
+          v-for="n in props.room.images.all.length"
+          :key="n"
           class="w-10 h-2  cursor-pointer rounded-full"
           :class="n - 1 === currentSlide ? 'bg-black' : 'bg-white'"
           @click="selectSlide(n - 1)"

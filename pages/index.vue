@@ -37,10 +37,10 @@ watch(error, () => {
     >
       <NuxtImg
         src="/images/hotel-screen.jpg"
-        class="absolute z--1 h-full w-full"
+        class="absolute -z-10 h-full w-full"
       />
       <h1 class="text-4xl text-white font-bold">
-        Бронируйте номера в нашем гостевом доме
+        Бронируйте номера в нашем отеле
       </h1>
       <BookingPanel class="rounded-3xl p-10 shadow-lg backdrop-blur-sm backdrop-brightness-75" />
     </section>

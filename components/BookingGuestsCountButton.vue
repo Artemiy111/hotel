@@ -8,7 +8,10 @@ const bookingStore = useBookingStore()
 <template>
   <Popover>
     <PopoverTrigger as-child>
-      <Button variant="outline" class="bg-white hover:bg-primary-foreground">
+      <Button
+        variant="outline"
+        class="bg-white hover:bg-primary-foreground"
+      >
         Гостей: {{ bookingStore.countGuests }}
       </Button>
     </PopoverTrigger>
