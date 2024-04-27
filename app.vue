@@ -13,4 +13,14 @@ import Toaster from './components/ui/toast/Toaster.vue'
 body {
   scrollbar-gutter: stable;
 }
+
+* {
+  @apply text-sm
+}
+
+@screen xs {
+  * {
+    @apply text-base
+  }
+}
 </style>

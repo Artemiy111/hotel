@@ -14,7 +14,7 @@ const props = defineProps<{ room: Room }>()
       class="aspect-video w-full"
     />
     <div class="flex flex-col p-4">
-      <h6 class="text-2xl font-bold">
+      <h6 class="text-xl lg:text-2xl font-bold">
         {{ props.room.title }}
       </h6>
       <span class="mt-3"> {{ room.price }}р ночь</span>

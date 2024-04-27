@@ -9,7 +9,7 @@ export const useBookingStore = defineStore('booking', () => {
     maxChildren: 5,
     maxBabies: 5,
   })
-  const countGuests = computed(() => guests.value.adults + guests.value.children + guests.value.babies)
+  const countGuests = computed(() => guests.value.adults + guests.value.children)
 
   const canDecrement = (guests: number, min: number) => guests > min
   const canDecrementAdults = computed(() => canDecrement(guests.value.adults, 1))
@@ -29,6 +29,16 @@ export const useBookingStore = defineStore('booking', () => {
   const decrementChildren = () => canDecrementChildren.value && guests.value.children--
   const decrementBabies = () => canDecrementBabies.value && guests.value.babies--
 
+  const resetGuests = () => {
+    guests.value.adults = 1
+    guests.value.children = 0
+    guests.value.babies = 0
+  }
+  const resetDates = () => {
+    checkIn.value = null
+    checkOut.value = null
+  }
+
   return {
     checkIn,
     checkOut,
@@ -47,5 +57,7 @@ export const useBookingStore = defineStore('booking', () => {
     decrementAdults,
     decrementChildren,
     decrementBabies,
+    resetGuests,
+    resetDates,
   }
 })

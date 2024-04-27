@@ -16,7 +16,7 @@ const bookingStore = useBookingStore()
       </Button>
     </PopoverTrigger>
     <PopoverContent class="p-4 flex flex-col w-full gap-4">
-      <div class="flex flex-wrap w-96 gap-4 justify-between items-center">
+      <div class="grid grid-cols-[1fr,max-content] gap-x-16 gap-y-4 justify-between items-center">
         <span class="whitespace-nowrap">Взрослые <span class="text-slate-500">от 12 лет</span> </span>
         <InputNumberWithButtons
           :can-decrement="bookingStore.canDecrementAdults"

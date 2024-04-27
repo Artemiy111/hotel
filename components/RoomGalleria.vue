@@ -32,11 +32,11 @@ function selectSlide(index: number) {
     }"
     @init-api="carouselApi = $event"
   >
-    <CarouselContent class="flex w-full items-center">
+    <CarouselContent class="w-full">
       <CarouselItem
         v-for="img in props.room.images.all"
         :key="img.id"
-        class="flex items-center justify-center"
+        class="flex w-full p-0 mr-10 items-center justify-center"
       >
         <NuxtImg
           :src="`/images/rooms/${props.room.id}/${img.id}.jpg`"

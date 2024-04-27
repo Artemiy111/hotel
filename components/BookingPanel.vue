@@ -8,7 +8,7 @@ const props = withDefaults(defineProps<{ showButton?: boolean }>(), { showButton
 </script>
 
 <template>
-  <div class="flex gap-4">
+  <div class="flex w-fit flex-wrap items-center justify-center gap-4">
     <BookingCalendarButton />
     <BookingGuestsCountButton />
     <NuxtLink

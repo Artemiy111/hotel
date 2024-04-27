@@ -19,7 +19,7 @@ const props = withDefaults(defineProps<{
 </script>
 
 <template>
-  <div class="grid grid-cols-[2fr_1fr] gap-8 overflow-clip">
+  <div class="grid grid-cols-[1fr,max-content] gap-4 xl:gap-8 overflow-clip">
     <RoomGalleria :room="props.room" />
     <section class="flex flex-col gap-6">
       <div class="flex flex-col gap-1">

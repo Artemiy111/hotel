@@ -30,28 +30,28 @@ watch(error, () => {
 </script>
 
 <template>
-  <div class="">
+  <div class="flex flex-col gap-12 xl:gap-16 2xl:gap-20">
     <section
       id="start-screen"
-      class="relative h-dvh flex flex-col items-center justify-center gap-10"
+      class="relative h-dvh flex flex-col items-center justify-center px-4  gap-10"
     >
       <NuxtImg
         src="/images/hotel-screen.jpg"
         class="absolute -z-10 h-full w-full"
       />
-      <h1 class="text-4xl text-white font-bold">
-        Бронируйте номера в нашем отеле
+      <h1 class="md:text-5xl shadow-xl text-3xl text-white font-bold text-balance text-center">
+        Гостеприимство с изыском
       </h1>
-      <BookingPanel class="rounded-3xl p-10 shadow-lg backdrop-blur-sm backdrop-brightness-75" />
+      <BookingPanel class="rounded-xl lg:rounded-3xl p-4 lg:p-8 shadow-lg backdrop-blur-sm backdrop-brightness-75" />
     </section>
     <section
       id="rooms"
-      class="m-auto mt-20 flex flex-col gap-8 container"
+      class="m-auto flex flex-col 2xl:gap-8 container gap-4 "
     >
-      <h2 class="text-4xl font-bold">
+      <h2 class="text-2xl lg:text-3xl font-bold">
         Номера
       </h2>
-      <div class="grid grid-cols-3 gap-5">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:grid-cols-2">
         <RoomCard
           v-for="room in rooms"
           :key="room.id"
@@ -64,7 +64,7 @@ watch(error, () => {
     <Dialog v-model:open="isCardDialogVisible">
       <DialogContent
         as-child
-        class="flex max-w-full w-10/12"
+        class="flex max-w-full w-11/12 lg:w-10/12"
       >
         <RoomCardFull
           v-if="cardDialogInfo"
@@ -80,17 +80,17 @@ watch(error, () => {
       </DialogContent>
     </Dialog>
 
-    <section class="m-auto mt-20 flex flex-col gap-8 container">
+    <section class="m-auto flex flex-col gap-8 container">
       <div class="flex flex-col gap-4">
-        <h3 class="text-4xl font-bold">
+        <h3 class="text-2xl lg:text-3xl font-bold">
           Расположение
         </h3>
         <span>г. Москва, ул Запоздалая, дом 34</span>
       </div>
-      <div class="w-full">
+      <div class="w-full ">
         <NuxtImg
           src="/images/map.jpg"
-          class="mb-10 max-h-70dvh w-full rounded-xl object-cover"
+          class="max-h-70dvh aspect-square lg:aspect-video w-full rounded-xl object-cover"
         />
       </div>
     </section>

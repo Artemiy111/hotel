@@ -11,11 +11,15 @@ const bookingStore = useBookingStore()
 
 const { data: rooms, error: _error } = await useFetch('/api/rooms')
 
-const priceConstraints = ref<[number, number]>([1000, 10000])
-const priceRange = ref<[number, number]>([1500, 3000])
+const initial = {
+  priceConstraints: [1000, 10000] as [number, number],
+  roomSquareConstraints: [15, 40] as [number, number],
+}
+const priceConstraints = ref<[number, number]>(initial.priceConstraints)
+const priceRange = ref<[number, number]>(initial.priceConstraints)
 
-const roomSquareConstraints = ref<[number, number]>([15, 40])
-const roomSquareRange = ref<[number, number]>([roomSquareConstraints.value[0], roomSquareConstraints.value[1]])
+const roomSquareConstraints = ref<[number, number]>(initial.roomSquareConstraints)
+const roomSquareRange = ref<[number, number]>(initial.roomSquareConstraints)
 
 const bedTypes = ref<BedType[]>([])
 
@@ -25,6 +29,16 @@ type BeadsCount = typeof BEDS_COUNT[number]
 const bedsCount = ref<BeadsCount>('does-not-matter')
 
 const roomOptions = ref<RoomOption[]>([])
+
+const resetFilters = () => {
+  bookingStore.resetDates()
+  bookingStore.resetGuests()
+  priceRange.value = initial.priceConstraints
+  roomSquareRange.value = initial.roomSquareConstraints
+  bedTypes.value = []
+  bedsCount.value = 'does-not-matter'
+  roomOptions.value = []
+}
 
 const filteredRooms = computed(() => {
   if (!rooms.value) return null
@@ -143,6 +157,10 @@ const filteredRooms = computed(() => {
           >{{ option.title }}</Label>
         </div>
       </div>
+
+      <Button @click="resetFilters">
+        Сбросить фильтры
+      </Button>
     </aside>
     <section class="flex flex-col gap-8">
       <template v-if="filteredRooms?.length">

@@ -14,14 +14,14 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-2">
     <Button
       class="p-1 h-fit rounded-full"
       variant="default"
       :disabled="!props.canDecrement"
       @click="emit('decrement')"
     >
-      <Minus />
+      <Minus :size="16" />
     </Button>
     <span class="w-6 text-center">{{ props.number }}</span>
 
@@ -31,7 +31,7 @@ const emit = defineEmits<{
       :disabled="!props.canIncrement"
       @click="emit('increment')"
     >
-      <Plus />
+      <Plus :size="16" />
     </Button>
   </div>
 </template>
