@@ -4,8 +4,12 @@ import {
   CalendarDate,
   DateFormatter,
   getLocalTimeZone,
+  startOfMonth,
+  endOfMonth,
+  type DateValue,
+  today,
 } from '@internationalized/date'
-
+import { isWithinInterval } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
 import { type DateRange } from 'radix-vue'
 import { RangeCalendar } from '@/components/ui/range-calendar'
@@ -16,25 +20,43 @@ import { useBookingStore } from '~/store/booking'
 
 const props = defineProps<{
   class?: HTMLAttributes['class']
+  bookedDateRanges: Array<{ start: Date, end: Date }>
 }>()
 
 const bookingStore = useBookingStore()
+const timeZone = bookingStore.timeZone
 
 const df = new DateFormatter('ru-RU', {
   dateStyle: 'medium',
 })
-const date = new Date()
+
+const todayDateValue = today(timeZone)
 const value = ref({
-  start: new CalendarDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
-  end: new CalendarDate(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()),
+  start: todayDateValue,
+  end: todayDateValue,
 }) as Ref<DateRange>
 
-const timeZone = getLocalTimeZone()
-
 watch(() => value.value, (value) => {
-  bookingStore.checkIn = value.start?.toDate(timeZone) || null
-  bookingStore.checkOut = value.end?.toDate(timeZone) || null
+  bookingStore.setDates(value.start?.toDate(timeZone) || null, value.end?.toDate(timeZone) || null)
 }, { deep: true, immediate: true })
+
+const start = todayDateValue
+const end = todayDateValue.add({ years: 1 })
+function isDateDisabled(dateValue: DateValue) {
+  if (start.compare(dateValue) <= 0 && end.compare(dateValue) >= 0) return false
+  return true
+}
+
+function isDateUnavailable(dateValue: DateValue) {
+  const date = dateValue.toDate(timeZone)
+  for (const range of props.bookedDateRanges) {
+    console.log(range)
+    if (isWithinInterval(date, range)) {
+      return true
+    }
+  }
+  return false
+}
 </script>
 
 <template>
@@ -58,7 +80,7 @@ watch(() => value.value, (value) => {
           </template>
         </template>
         <template v-else>
-          Pick a date
+          Выберите даты пребывания
         </template>
       </Button>
     </PopoverTrigger>
@@ -68,7 +90,12 @@ watch(() => value.value, (value) => {
         locale="ru-RU"
         initial-focus
         :number-of-months="2"
-        @update:start-value="(startDate) => value.start = startDate"
+        :is-date-unavailable="isDateUnavailable"
+        :is-date-disabled="isDateDisabled"
+        @update:start-value="(startDate) => {
+          console.log(startDate?.toDate(timeZone), 'start')
+          value.start = startDate
+        }"
       />
     </PopoverContent>
   </Popover>

@@ -6,7 +6,7 @@ export interface Room {
   id: string
   title: string
   price: number
-  bookedDateRanges: []
+  bookedDateRanges: Array<{ start: Date, end: Date }>
   conditions: {
     maxGuests: number
     square: number

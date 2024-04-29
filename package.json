@@ -12,6 +12,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@internationalized/date": "^3.5.2",
     "@nuxt/image": "^1.6.0",
     "@vueuse/core": "^10.9.0",
     "class-variance-authority": "^0.7.0",

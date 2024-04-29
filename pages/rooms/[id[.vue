@@ -63,7 +63,15 @@ const checkOutTime = ref(checkOutTimeOptions.at(-1)!)
 
 const route = useRoute()
 const roomId = route.params.id as string
-const { data: room, error: _error } = useFetch(`/api/rooms/${roomId}`)
+const { data: room, error: _error } = useFetch(`/api/rooms/${roomId}`, {
+  transform: (room) => {
+    if (!room) return null
+    return {
+      ...room,
+      bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
+    }
+  },
+})
 
 interface GuestName {
   lastName: string
@@ -120,7 +128,10 @@ const tab = ref<'1' | '2'>('1')
         <h3 class="text-3xl font-bold">
           Заселение
         </h3>
-        <BookingPanel :show-button="false" />
+        <BookingPanel
+          :show-button="false"
+          :booked-date-ranges="room.bookedDateRanges"
+        />
       </section>
       <section class="flex flex-col gap-4">
         <h3 class="text-3xl font-bold">

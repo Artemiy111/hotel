@@ -9,7 +9,18 @@ import BookingGuestsCountButton from '~/components/BookingGuestsCountButton.vue'
 
 const bookingStore = useBookingStore()
 
-const { data: rooms, error: _error } = await useFetch('/api/rooms')
+const { data: rooms, error: _error } = await useFetch('/api/rooms',
+  {
+    transform: rooms => rooms.map((room) => {
+      return {
+        ...room,
+        bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
+      }
+    }),
+  },
+)
+
+const bookedDateRanges = computed(() => rooms.value?.flatMap(r => r.bookedDateRanges) || [])
 
 const initial = {
   priceConstraints: [1000, 10000] as [number, number],
@@ -69,7 +80,10 @@ const filteredRooms = computed(() => {
 <template>
   <div class="grid grid-cols-[300px_1fr] mx-auto gap-16 container">
     <aside class="flex flex-col gap-6">
-      <BookingCalendarButton class="w-full" />
+      <BookingCalendarButton
+        :booked-date-ranges="bookedDateRanges"
+        class="w-full"
+      />
       <BookingGuestsCountButton />
 
       <div class="flex flex-col gap-2">

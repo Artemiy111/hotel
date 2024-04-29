@@ -1,6 +1,11 @@
+import { today, getLocalTimeZone } from '@internationalized/date'
+
 export const useBookingStore = defineStore('booking', () => {
-  const checkIn = ref<Date | null>(null)
-  const checkOut = ref<Date | null>(null)
+  const timeZone = getLocalTimeZone()
+  const todayInMoscow = today(timeZone).toDate(timeZone)
+
+  const checkIn = ref<Date | null>(todayInMoscow)
+  const checkOut = ref<Date | null>(todayInMoscow)
   const guests = ref({
     adults: 1,
     children: 0,
@@ -29,20 +34,28 @@ export const useBookingStore = defineStore('booking', () => {
   const decrementChildren = () => canDecrementChildren.value && guests.value.children--
   const decrementBabies = () => canDecrementBabies.value && guests.value.babies--
 
+  const setDates = (start: Date | null, end: Date | null) => {
+    checkIn.value = start
+    checkOut.value = end
+  }
+
   const resetGuests = () => {
     guests.value.adults = 1
     guests.value.children = 0
     guests.value.babies = 0
   }
+
   const resetDates = () => {
-    checkIn.value = null
-    checkOut.value = null
+    checkIn.value = todayInMoscow
+    checkOut.value = todayInMoscow
   }
 
   return {
-    checkIn,
-    checkOut,
-    guests: readonly(guests),
+    checkIn: computed(() => checkIn.value),
+    checkOut: computed(() => checkOut.value),
+    guests: computed(() => guests.value),
+    today: todayInMoscow,
+    timeZone: timeZone,
     countGuests,
     canDecrementAdults,
     canDecrementChildren,
@@ -57,6 +70,7 @@ export const useBookingStore = defineStore('booking', () => {
     decrementAdults,
     decrementChildren,
     decrementBabies,
+    setDates,
     resetGuests,
     resetDates,
   }

@@ -1,11 +1,14 @@
+import { today, getLocalTimeZone } from '@internationalized/date'
 import type { Room } from '~/types'
 
+const timeZone = getLocalTimeZone()
+const todayDate = today(timeZone)
 export const rooms: Room[] = [
   {
     id: '1',
     title: 'Обычный',
     price: 1200,
-    bookedDateRanges: [],
+    bookedDateRanges: [{ start: todayDate.add({ days: 3 }).toDate(timeZone), end: todayDate.add({ days: 6 }).toDate(timeZone) }],
     conditions: {
       maxGuests: 2,
       square: 15,

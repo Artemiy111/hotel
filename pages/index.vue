@@ -19,7 +19,16 @@ watch(isCardDialogVisible, () => {
     cardDialogInfo.value = null
 })
 
-const { data: rooms, error } = await useFetch('/api/rooms')
+const { data: rooms, error } = useFetch('/api/rooms', {
+  transform: rooms => rooms.map((room) => {
+    return {
+      ...room,
+      bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
+    }
+  }),
+})
+
+const bookedDateRanges = computed(() => rooms.value?.flatMap(r => r.bookedDateRanges) || [])
 const toast = useToast()
 watch(error, () => {
   if (error)
@@ -42,7 +51,10 @@ watch(error, () => {
       <h1 class="md:text-5xl shadow-xl text-3xl text-white font-bold text-balance text-center">
         Гостеприимство с изыском
       </h1>
-      <BookingPanel class="rounded-xl lg:rounded-3xl p-4 lg:p-8 shadow-lg backdrop-blur-sm backdrop-brightness-75" />
+      <BookingPanel
+        :booked-date-ranges="bookedDateRanges"
+        class="rounded-xl lg:rounded-3xl p-4 lg:p-8 shadow-lg backdrop-blur-sm backdrop-brightness-75"
+      />
     </section>
     <section
       id="rooms"

@@ -4,12 +4,15 @@ import BookingGuestsCountButton from './BookingGuestsCountButton.vue'
 import { buttonVariants } from './ui/button'
 import { useBookingStore } from '~/store/booking'
 
-const props = withDefaults(defineProps<{ showButton?: boolean }>(), { showButton: true })
+const props = withDefaults(defineProps<{
+  showButton?: boolean
+  bookedDateRanges: Array<{ start: Date, end: Date }> }>(),
+{ showButton: true })
 </script>
 
 <template>
   <div class="flex w-fit flex-wrap items-center justify-center gap-4">
-    <BookingCalendarButton />
+    <BookingCalendarButton :booked-date-ranges="props.bookedDateRanges" />
     <BookingGuestsCountButton />
     <NuxtLink
       v-if="props.showButton"
