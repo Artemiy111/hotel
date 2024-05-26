@@ -39,7 +39,7 @@ function selectSlide(index: number) {
         class="flex w-full p-0 mr-10 items-center justify-center"
       >
         <NuxtImg
-          :src="`/images/rooms/${props.room.id}/${img.id}.jpg`"
+          :src="img.url"
           format="avif,webp,png,jpg"
           class="aspect-video w-full object-cover"
         />

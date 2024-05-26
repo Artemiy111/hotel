@@ -10,7 +10,7 @@ const props = defineProps<{ room: RoomDto }>()
     class="w-full flex flex-col overflow-hidden border-2 border-surface-200 rounded-xl"
   >
     <NuxtImg
-      :src="`/images/rooms/${room.id}/${room.images[0]?.id}.jpg`"
+      :src="props.room.images[0]?.url"
       class="aspect-video w-full"
     />
     <div class="flex flex-col p-4">

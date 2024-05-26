@@ -33,7 +33,7 @@ export interface RoomDto {
 
 export interface RoomImageDto {
   id: number
-  filename: string
+  url: string
 }
 
 export interface CreateReservationGuest {
