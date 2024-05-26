@@ -50,7 +50,6 @@ function isDateDisabled(dateValue: DateValue) {
 function isDateUnavailable(dateValue: DateValue) {
   const date = dateValue.toDate(timeZone)
   for (const range of props.bookedDateRanges) {
-    console.log(range)
     if (isWithinInterval(date, range)) {
       return true
     }
@@ -93,7 +92,6 @@ function isDateUnavailable(dateValue: DateValue) {
         :is-date-unavailable="isDateUnavailable"
         :is-date-disabled="isDateDisabled"
         @update:start-value="(startDate) => {
-          console.log(startDate?.toDate(timeZone), 'start')
           value.start = startDate
         }"
       />

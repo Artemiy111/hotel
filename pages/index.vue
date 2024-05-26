@@ -33,15 +33,6 @@ const { data: rooms, error } = useLazyAsyncData(async () => await $api<RoomDto[]
   }),
 })
 
-// const { data: rooms, error } = useFetch('/api/rooms', {
-//   transform: rooms => rooms.map((room) => {
-//     return {
-//       ...room,
-//       bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
-//     }
-//   }),
-// })
-
 const bookedDateRanges = computed(() => rooms.value?.flatMap(r => r.bookedDateRanges) || [])
 const toast = useToast()
 watch(error, () => {

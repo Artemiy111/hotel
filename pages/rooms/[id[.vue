@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { differenceInDays } from 'date-fns'
 import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
 import RoomGuestInfo from '~/components/RoomGuestInfo.vue'
@@ -10,58 +11,58 @@ import type { CreateReservation, CreateReservationGuest, RoomDto } from '~/types
 const bookingStore = useBookingStore()
 const { checkIn, checkOut } = toRefs(bookingStore)
 interface TimeOption {
-  hour: number
-  minute: number
+  hours: number
+  minutes: number
 }
 
 function timePad(time: number) {
   return time.toString().padStart(2, '0')
 }
 function timeToString(time: TimeOption) {
-  return `${timePad(time.hour)}:${timePad(time.minute)}`
+  return `${timePad(time.hours)}:${timePad(time.minutes)}`
 }
 const checkInTimeOptions: TimeOption[] = [
-  { hour: 14, minute: 0 },
-  { hour: 14, minute: 30 },
-  { hour: 15, minute: 0 },
-  { hour: 16, minute: 30 },
-  { hour: 17, minute: 0 },
-  { hour: 17, minute: 30 },
-  { hour: 18, minute: 0 },
-  { hour: 19, minute: 30 },
-  { hour: 20, minute: 0 },
-  { hour: 20, minute: 30 },
-  { hour: 21, minute: 0 },
-  { hour: 22, minute: 30 },
-  { hour: 23, minute: 0 },
-  { hour: 23, minute: 30 },
+  { hours: 14, minutes: 0 },
+  { hours: 14, minutes: 30 },
+  { hours: 15, minutes: 0 },
+  { hours: 16, minutes: 30 },
+  { hours: 17, minutes: 0 },
+  { hours: 17, minutes: 30 },
+  { hours: 18, minutes: 0 },
+  { hours: 19, minutes: 30 },
+  { hours: 20, minutes: 0 },
+  { hours: 20, minutes: 30 },
+  { hours: 21, minutes: 0 },
+  { hours: 22, minutes: 30 },
+  { hours: 23, minutes: 0 },
+  { hours: 23, minutes: 30 },
 ]
 const checkInTime = ref(checkInTimeOptions[0])
 
 const checkOutTimeOptions: TimeOption[] = [
-  { hour: 0, minute: 0 },
-  { hour: 0, minute: 30 },
-  { hour: 1, minute: 0 },
-  { hour: 1, minute: 30 },
-  { hour: 2, minute: 0 },
-  { hour: 3, minute: 30 },
-  { hour: 4, minute: 0 },
-  { hour: 4, minute: 30 },
-  { hour: 5, minute: 0 },
-  { hour: 5, minute: 30 },
-  { hour: 6, minute: 0 },
-  { hour: 6, minute: 30 },
-  { hour: 7, minute: 0 },
-  { hour: 7, minute: 30 },
-  { hour: 8, minute: 0 },
-  { hour: 8, minute: 30 },
-  { hour: 9, minute: 0 },
-  { hour: 9, minute: 30 },
-  { hour: 10, minute: 0 },
-  { hour: 10, minute: 30 },
-  { hour: 11, minute: 0 },
-  { hour: 11, minute: 30 },
-  { hour: 12, minute: 0 },
+  { hours: 0, minutes: 0 },
+  { hours: 0, minutes: 30 },
+  { hours: 1, minutes: 0 },
+  { hours: 1, minutes: 30 },
+  { hours: 2, minutes: 0 },
+  { hours: 3, minutes: 30 },
+  { hours: 4, minutes: 0 },
+  { hours: 4, minutes: 30 },
+  { hours: 5, minutes: 0 },
+  { hours: 5, minutes: 30 },
+  { hours: 6, minutes: 0 },
+  { hours: 6, minutes: 30 },
+  { hours: 7, minutes: 0 },
+  { hours: 7, minutes: 30 },
+  { hours: 8, minutes: 0 },
+  { hours: 8, minutes: 30 },
+  { hours: 9, minutes: 0 },
+  { hours: 9, minutes: 30 },
+  { hours: 10, minutes: 0 },
+  { hours: 10, minutes: 30 },
+  { hours: 11, minutes: 0 },
+  { hours: 11, minutes: 30 },
+  { hours: 12, minutes: 0 },
 ]
 
 const checkOutTime = ref(checkOutTimeOptions.at(-1)!)
@@ -83,7 +84,7 @@ const { data: room, error } = useLazyAsyncData(async () => await $api<RoomDto>(`
   },
 })
 watch(error, () => {
-  // if (error) navigateTo('/not-found')
+  if (error) navigateTo('/not-found')
 })
 
 interface GuestName {
@@ -121,9 +122,19 @@ const childAgeOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1
 
 const wishes = ref('')
 
-const totalPrice = ref(6000)
+const totalPrice = computed(() => {
+  if (!room.value) return 0
+  if (!checkIn.value || !checkOut.value) return room.value.price
+  return differenceInDays(checkOut.value, checkIn.value) * room.value.price
+})
 
 const tab = ref<'1' | '2'>('1')
+
+const canCreateReservation = computed(() => {
+  if (!room.value || !checkIn.value || !checkOut.value) return false
+
+  return true
+})
 
 async function createReservation() {
   if (!room.value) return
@@ -131,16 +142,16 @@ async function createReservation() {
   const checkInDateTime = new Date(
     checkIn.value.getFullYear(),
     checkIn.value.getMonth(),
-    checkIn.value.getDay(),
-    checkInTime.value.hour,
-    checkInTime.value.minute,
+    checkIn.value.getDate(),
+    checkInTime.value.hours,
+    checkInTime.value.minutes,
   )
   const checkOutDateTime = new Date(
     checkOut.value.getFullYear(),
     checkOut.value.getMonth(),
-    checkOut.value.getDay(),
-    checkOutTime.value.hour,
-    checkOutTime.value.minute,
+    checkOut.value.getDate(),
+    checkOutTime.value.hours,
+    checkOutTime.value.minutes,
   )
 
   const reservationGuests: CreateReservationGuest[] = [
@@ -183,6 +194,11 @@ async function createReservation() {
     const _res = await $api('/reservations', {
       method: 'POST',
       body: reservation,
+    })
+    toast({
+      variant: 'success',
+      title: 'Номер успешно забронирован',
+      description: 'На указанную почту прислана вся информация о бронировании',
     })
   }
   catch (_e) {
@@ -442,6 +458,7 @@ async function createReservation() {
               </p>
               <Button
                 class="w-fit"
+                :disbled="!canCreateReservation"
                 @click="createReservation"
               >
                 Забронировать
@@ -453,6 +470,9 @@ async function createReservation() {
             class=""
           >
             <div class="flex flex-col gap-4 max-w-lg">
+              <p class="p-3 rounded-lg bg-red-100 text-destructive">
+                В данный момент недоступно
+              </p>
               <p>
                 Оплачивается вся сумма брони. Данный способ оплаты поддерживает платежи только с
                 карт, выпущенных российскими банками, а также с карт платежной системы Мир,

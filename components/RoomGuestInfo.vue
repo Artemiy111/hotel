@@ -5,21 +5,21 @@ const guest = defineModel<{ lastName: string, name: string, middleName: string }
 </script>
 
 <template>
-  <div class="flex gap-4">
+  <div class="flex w-full max-w-[785px] gap-4">
     <Input
       v-model="guest.lastName"
       placeholder="Фамилия"
-      class="w-fit"
+      class="w-full"
     />
     <Input
       v-model="guest.name"
       placeholder="Имя"
-      class="w-fit"
+      class="w-full"
     />
     <Input
       v-model="guest.middleName"
       placeholder="Отчество"
-      class="w-fit"
+      class="w-full"
     />
   </div>
 </template>

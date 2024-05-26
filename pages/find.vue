@@ -24,6 +24,21 @@ const { data: rooms, error: _error } = useAsyncData(async () => await $api<RoomD
   }),
 })
 
+watch(rooms, () => {
+  if (!rooms.value) return
+  const minPrice = Math.min(...rooms.value.map(r => r.price))
+  const maxPrice = Math.max(...rooms.value.map(r => r.price))
+
+  const minSquare = Math.min(...rooms.value.map(r => r.conditions.square))
+  const maxSquare = Math.max(...rooms.value.map(r => r.conditions.square))
+
+  priceConstraints.value = [minPrice, maxPrice]
+  roomSquareConstraints.value = [minSquare, maxSquare]
+
+  priceRange.value = [priceConstraints.value[0], priceConstraints.value[1]]
+  roomSquareRange.value = [roomSquareConstraints.value[0], roomSquareConstraints.value[1]]
+})
+
 const bookedDateRanges = computed(() => rooms.value?.flatMap(r => r.bookedDateRanges) || [])
 
 const initial = {

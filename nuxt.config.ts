@@ -3,6 +3,7 @@ export default defineNuxtConfig({
     componentIslands: true,
   },
   devtools: { enabled: false },
+  ssr: false,
   modules: [
     '@nuxt/image',
     '@nuxtjs/tailwindcss',
@@ -32,6 +33,8 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
-    apiBaseUrl: 'http://localhost:5015/api',
+    public: {
+      apiBaseUrl: 'http://localhost:5015/api',
+    },
   },
 })
