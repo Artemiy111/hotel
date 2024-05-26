@@ -2,11 +2,17 @@ import type { BedType, RoomOption } from '~/constants'
 
 export type { BedType, RoomOption }
 
-export interface Room {
-  id: string
+type BookedDateRangeDto = {
+  roomId: number
+  start: Date
+  end: Date
+}
+
+export interface RoomDto {
+  id: number
   title: string
   price: number
-  bookedDateRanges: Array<{ start: Date, end: Date }>
+  bookedDateRanges: BookedDateRangeDto[]
   conditions: {
     maxGuests: number
     square: number
@@ -14,14 +20,45 @@ export interface Room {
       double: number
       single: number
     }
-    options: RoomOption[]
+    options: {
+      hasSafe: boolean
+      hasConditioner: boolean
+      hasShower: boolean
+      hasTub: boolean
+    }
   }
-  images: {
-    preview: RoomImage
-    all: RoomImage[]
-  }
+  images: RoomImageDto[]
+
 }
 
-export interface RoomImage {
-  id: string
+export interface RoomImageDto {
+  id: number
+  filename: string
+}
+
+export interface CreateReservationGuest {
+  name: string
+  lastName: string
+  middleName: string
+  isChild: boolean
+  age: number | null
+}
+
+export interface CreateReservation {
+  roomId: number
+  checkIn: Date
+  checkOut: Date
+  isPaid: boolean
+  wishes: string | null
+  totalPrice: number
+  booker: {
+    name: string
+    lastName: string
+    middleName: string
+    email: string
+    phone: string
+  }
+
+  guests: CreateReservationGuest[]
+
 }

@@ -3,7 +3,12 @@ import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
 import RoomGuestInfo from '~/components/RoomGuestInfo.vue'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { toast } from '~/components/ui/toast'
+import { useBookingStore } from '~/store/booking'
+import type { CreateReservation, CreateReservationGuest, RoomDto } from '~/types'
 
+const bookingStore = useBookingStore()
+const { checkIn, checkOut } = toRefs(bookingStore)
 interface TimeOption {
   hour: number
   minute: number
@@ -62,15 +67,23 @@ const checkOutTimeOptions: TimeOption[] = [
 const checkOutTime = ref(checkOutTimeOptions.at(-1)!)
 
 const route = useRoute()
-const roomId = route.params.id as string
-const { data: room, error: _error } = useFetch(`/api/rooms/${roomId}`, {
+const roomId = route.params.id
+const { $api } = useNuxtApp()
+
+const { data: room, error } = useLazyAsyncData(async () => await $api<RoomDto>(`/rooms/${roomId}`), {
   transform: (room) => {
-    if (!room) return null
     return {
       ...room,
-      bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
-    }
+      bookedDateRanges: room.bookedDateRanges.map(r => ({
+        roomId: r.roomId,
+        start: new Date(r.start),
+        end: new Date(r.end),
+      })),
+    } satisfies RoomDto
   },
+})
+watch(error, () => {
+  // if (error) navigateTo('/not-found')
 })
 
 interface GuestName {
@@ -79,10 +92,10 @@ interface GuestName {
   middleName: string
 }
 
-const contactInfo = ref<{ guest: GuestName, email: string, tel: string }>({
+const booker = ref<{ guest: GuestName, email: string, phone: string }>({
   guest: { lastName: '', name: '', middleName: '' },
   email: '',
-  tel: '',
+  phone: '',
 })
 
 const isBookingForAnotherPerson = ref(false)
@@ -108,9 +121,77 @@ const childAgeOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 1
 
 const wishes = ref('')
 
-const price = ref(6000)
+const totalPrice = ref(6000)
 
 const tab = ref<'1' | '2'>('1')
+
+async function createReservation() {
+  if (!room.value) return
+  if (!checkIn.value || !checkOut.value) return
+  const checkInDateTime = new Date(
+    checkIn.value.getFullYear(),
+    checkIn.value.getMonth(),
+    checkIn.value.getDay(),
+    checkInTime.value.hour,
+    checkInTime.value.minute,
+  )
+  const checkOutDateTime = new Date(
+    checkOut.value.getFullYear(),
+    checkOut.value.getMonth(),
+    checkOut.value.getDay(),
+    checkOutTime.value.hour,
+    checkOutTime.value.minute,
+  )
+
+  const reservationGuests: CreateReservationGuest[] = [
+    ...guests.value.map(g => ({
+      ...g,
+      isChild: false,
+      age: null,
+    })),
+
+    ...children.value.map(c => ({
+      ...c,
+      isChild: true,
+      age: c.age,
+    })),
+  ]
+  if (!isBookingForAnotherPerson.value) reservationGuests.push(
+    {
+      ...booker.value.guest,
+      isChild: false,
+      age: null,
+    },
+  )
+
+  const reservation: CreateReservation = {
+    roomId: room.value.id,
+    totalPrice: totalPrice.value,
+    checkIn: checkInDateTime,
+    checkOut: checkOutDateTime,
+    booker: {
+      ...booker.value.guest,
+      email: booker.value.email,
+      phone: booker.value.phone,
+    },
+    guests: reservationGuests,
+    wishes: wishes.value.trim() || null,
+    isPaid: false,
+  }
+
+  try {
+    const _res = await $api('/reservations', {
+      method: 'POST',
+      body: reservation,
+    })
+  }
+  catch (_e) {
+    toast({
+      variant: 'destructive',
+      title: 'Не удалось забронировать номер',
+      description: 'Что-то пошло не так' })
+  }
+}
 </script>
 
 <template>
@@ -201,11 +282,11 @@ const tab = ref<'1' | '2'>('1')
           </AlertDescription>
         </Alert>
         <div class="flex flex-col gap-4">
-          <RoomGuestInfo v-model="contactInfo.guest" />
+          <RoomGuestInfo v-model="booker.guest" />
           <div class="flex gap-4">
             <div class="relative w-full max-w-sm items-center">
               <Input
-                v-model="contactInfo.email"
+                v-model="booker.email"
                 class="pl-10"
                 placeholder="Email"
                 type="email"
@@ -218,7 +299,7 @@ const tab = ref<'1' | '2'>('1')
 
             <div class="relative w-full max-w-sm items-center">
               <Input
-                v-model="contactInfo.tel"
+                v-model="booker.phone"
                 placeholder="Телефон"
                 type="tel"
                 class="pl-10"
@@ -245,7 +326,7 @@ const tab = ref<'1' | '2'>('1')
         <div class="flex flex-col gap-4">
           <RoomGuestInfo
             v-show="!isBookingForAnotherPerson"
-            v-model="contactInfo.guest"
+            v-model="booker.guest"
           />
           <div
             v-for="(guest, index) in guests"
@@ -359,7 +440,10 @@ const tab = ref<'1' | '2'>('1')
                 подтверждение бронирования на электронную почту, которую указали при бронировании,
                 и предъявите его при заселении.
               </p>
-              <Button class="w-fit">
+              <Button
+                class="w-fit"
+                @click="createReservation"
+              >
                 Забронировать
               </Button>
             </div>
@@ -374,7 +458,10 @@ const tab = ref<'1' | '2'>('1')
                 карт, выпущенных российскими банками, а также с карт платежной системы Мир,
                 выпущенных банками других стран.
               </p>
-              <Button class="w-fit">
+              <Button
+                class="w-fit"
+                disabled
+              >
                 Оплатить
               </Button>
             </div>

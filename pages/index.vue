@@ -3,13 +3,13 @@ import { VisuallyHidden } from 'radix-vue'
 import BookingPanel from '~/components/BookingPanel.vue'
 import RoomCard from '~/components/RoomCard.vue'
 import RoomCardFull from '~/components/RoomCardFull.vue'
-import type { Room } from '~/types'
+import type { RoomDto } from '~/types'
 import { useToast } from '~/components/ui/toast'
 
-const cardDialogInfo = ref<Room | null>(null)
+const cardDialogInfo = ref<RoomDto | null>(null)
 const isCardDialogVisible = ref(false)
 
-function openCardDialog(room: Room) {
+function openCardDialog(room: RoomDto) {
   cardDialogInfo.value = room
   isCardDialogVisible.value = true
 }
@@ -18,20 +18,34 @@ watch(isCardDialogVisible, () => {
   if (!isCardDialogVisible.value)
     cardDialogInfo.value = null
 })
-
-const { data: rooms, error } = useFetch('/api/rooms', {
+const { $api } = useNuxtApp()
+const { data: rooms, error } = useLazyAsyncData(async () => await $api<RoomDto[]>('/rooms/'), {
   transform: rooms => rooms.map((room) => {
     return {
       ...room,
-      bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
-    }
+      bookedDateRanges: room.bookedDateRanges.map(r =>
+        ({
+          roomId: r.roomId,
+          start: new Date(r.start),
+          end: new Date(r.end) }
+        )),
+    } satisfies RoomDto
   }),
 })
+
+// const { data: rooms, error } = useFetch('/api/rooms', {
+//   transform: rooms => rooms.map((room) => {
+//     return {
+//       ...room,
+//       bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
+//     }
+//   }),
+// })
 
 const bookedDateRanges = computed(() => rooms.value?.flatMap(r => r.bookedDateRanges) || [])
 const toast = useToast()
 watch(error, () => {
-  if (error)
+  if (!error)
     return
 
   toast.toast({ variant: 'destructive', title: 'Ошибка', description: 'Не удалось загрузить информацию о номерах' })

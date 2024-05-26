@@ -1,5 +1,8 @@
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  experimental: {
+    componentIslands: true,
+  },
+  devtools: { enabled: false },
   modules: [
     '@nuxt/image',
     '@nuxtjs/tailwindcss',
@@ -28,5 +31,7 @@ export default defineNuxtConfig({
       '2xl': 1536,
     },
   },
-
+  runtimeConfig: {
+    apiBaseUrl: 'http://localhost:5015/api',
+  },
 })

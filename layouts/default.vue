@@ -5,9 +5,13 @@ import TheFooter from '~/components/layout/TheFooter.vue'
 </script>
 
 <template>
-  <div class="">
-    <TheHeader />
-    <TheMain> <slot /> </TheMain>
+  <div class="flex gap-16 flex-col">
+    <div class="min-h-svh flex flex-col">
+      <TheHeader />
+      <TheMain class="flex-grow">
+        <slot />
+      </TheMain>
+    </div>
     <TheFooter />
   </div>
 </template>

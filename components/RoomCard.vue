@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Room } from '~/types'
+import type { RoomDto } from '~/types'
 import { Button } from '~/components/ui/button'
 
-const props = defineProps<{ room: Room }>()
+const props = defineProps<{ room: RoomDto }>()
 </script>
 
 <template>
@@ -10,7 +10,7 @@ const props = defineProps<{ room: Room }>()
     class="w-full flex flex-col overflow-hidden border-2 border-surface-200 rounded-xl"
   >
     <NuxtImg
-      :src="`/images/rooms/${room.id}/${room.images.preview.id}.jpg`"
+      :src="`/images/rooms/${room.id}/${room.images[0]?.id}.jpg`"
       class="aspect-video w-full"
     />
     <div class="flex flex-col p-4">

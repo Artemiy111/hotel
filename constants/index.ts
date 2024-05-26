@@ -10,16 +10,16 @@ export const BED_TYPES = {
 export type BedType = keyof typeof BED_TYPES
 
 export const ROOM_OPTIONS = {
-  'has-safe': {
+  hasSafe: {
     title: 'Сейф',
   },
-  'has-conditioner': {
+  hasConditioner: {
     title: 'Кондиционер',
   },
-  'has-tub': {
+  hasTub: {
     title: 'Ванная',
   },
-  'has-shower': {
+  hasShower: {
     title: 'Душ',
   },
 }

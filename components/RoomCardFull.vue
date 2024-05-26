@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Box, Users, BedDouble, BedSingle } from 'lucide-vue-next'
-import type { Room } from '~/types'
+import { buttonVariants } from './ui/button'
+import type { RoomDto, RoomOption } from '~/types'
 import { ROOM_OPTIONS } from '~/constants'
 import RoomGalleria from '~/components/RoomGalleria.vue'
 
 const props = withDefaults(defineProps<{
-  room: Room
+  room: RoomDto
   button?: {
     show?: boolean
     isOutlined?: boolean
@@ -57,22 +58,20 @@ const props = withDefaults(defineProps<{
 
       <ul class="flex flex-col gap-2">
         <li
-          v-for="option in props.room.conditions.options"
+          v-for="option in Object.keys(props.room.conditions.options)"
           :key="option"
         >
-          {{ ROOM_OPTIONS[option].title }}
+          {{ ROOM_OPTIONS[option as RoomOption].title }}
         </li>
       </ul>
       <NuxtLink
         v-if="props.button.show"
         :to="`/rooms/${props.room.id}`"
+        :class="buttonVariants({
+          variant: props.button.isOutlined ? 'outline' : 'default',
+        })"
       >
-        <Button
-          class="w-fit"
-          :variant="props.button.isOutlined ? 'outline' : 'default'"
-        >
-          Забронировать
-        </Button>
+        Забронировать
       </NuxtLink>
     </section>
   </div>

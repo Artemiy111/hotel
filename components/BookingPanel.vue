@@ -2,7 +2,6 @@
 import BookingCalendarButton from './BookingCalendarButton.vue'
 import BookingGuestsCountButton from './BookingGuestsCountButton.vue'
 import { buttonVariants } from './ui/button'
-import { useBookingStore } from '~/store/booking'
 
 const props = withDefaults(defineProps<{
   showButton?: boolean

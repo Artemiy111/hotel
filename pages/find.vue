@@ -6,19 +6,23 @@ import RoomCardFull from '~/components/RoomCardFull.vue'
 import InputNumberRange from '~/components/InputNumberRange.vue'
 import { useBookingStore } from '~/store/booking'
 import BookingGuestsCountButton from '~/components/BookingGuestsCountButton.vue'
+import type { RoomDto } from '~/types'
 
 const bookingStore = useBookingStore()
-
-const { data: rooms, error: _error } = await useFetch('/api/rooms',
-  {
-    transform: rooms => rooms.map((room) => {
-      return {
-        ...room,
-        bookedDateRanges: room.bookedDateRanges.map(r => ({ start: new Date(r.start), end: new Date(r.end) })),
-      }
-    }),
-  },
-)
+const { $api } = useNuxtApp()
+const { data: rooms, error: _error } = useAsyncData(async () => await $api<RoomDto[]>('/rooms'), {
+  transform: rooms => rooms.map((room) => {
+    return {
+      ...room,
+      bookedDateRanges: room.bookedDateRanges.map(r =>
+        ({
+          roomId: r.roomId,
+          start: new Date(r.start),
+          end: new Date(r.end) }
+        )),
+    } satisfies RoomDto
+  }),
+})
 
 const bookedDateRanges = computed(() => rooms.value?.flatMap(r => r.bookedDateRanges) || [])
 
@@ -68,7 +72,7 @@ const filteredRooms = computed(() => {
     }).length === bedTypes.value.length
 
     const optionsFilter = roomOptions.value.filter(
-      option => room.conditions.options.includes(option),
+      option => room.conditions.options[option],
     ).length
     === roomOptions.value.length
 
