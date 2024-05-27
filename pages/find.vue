@@ -9,6 +9,7 @@ import BookingGuestsCountButton from '~/components/BookingGuestsCountButton.vue'
 import type { RoomDto } from '~/types'
 
 const bookingStore = useBookingStore()
+const { checkIn, checkOut } = toRefs(bookingStore)
 const { $api } = useNuxtApp()
 const { data: rooms, error: _error } = useAsyncData(async () => await $api<RoomDto[]>('/rooms'), {
   transform: rooms => rooms.map((room) => {
@@ -73,6 +74,13 @@ const resetFilters = () => {
 const filteredRooms = computed(() => {
   if (!rooms.value) return null
   return rooms.value.filter((room) => {
+    const roomBookedDateRanges = bookedDateRanges.value.filter(r => r.roomId === room.id)
+    const bookedDateRangesFilter = !roomBookedDateRanges.length || roomBookedDateRanges.some((r) => {
+      if (!checkIn.value || !checkOut.value) return true
+      const isIntersect = (checkIn.value >= r.start && checkOut.value < r.end) || (checkIn.value > r.start && checkOut.value <= r.end)
+      return !isIntersect
+    })
+
     const guestsCountFilter = bookingStore.countGuests <= room.conditions.maxGuests
     const priceFilter = priceRange.value[0] <= room.price && room.price <= priceRange.value[1]
     const squareFilter = roomSquareRange.value[0] <= room.conditions.square && room.conditions.square <= roomSquareRange.value[1]
@@ -91,7 +99,13 @@ const filteredRooms = computed(() => {
     ).length
     === roomOptions.value.length
 
-    return guestsCountFilter && priceFilter && squareFilter && bedsTypesFilter && bedsCountFilter && optionsFilter
+    return bookedDateRangesFilter
+      && guestsCountFilter
+      && priceFilter
+      && squareFilter
+      && bedsTypesFilter
+      && bedsCountFilter
+      && optionsFilter
   })
 })
 </script>
@@ -100,7 +114,7 @@ const filteredRooms = computed(() => {
   <div class="grid grid-cols-[300px_1fr] mx-auto gap-16 container">
     <aside class="flex flex-col gap-6">
       <BookingCalendarButton
-        :booked-date-ranges="bookedDateRanges"
+        :booked-date-ranges="[]"
         class="w-full"
       />
       <BookingGuestsCountButton />
