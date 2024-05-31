@@ -60,5 +60,24 @@ export interface CreateReservation {
   }
 
   guests: CreateReservationGuest[]
+}
 
+export interface ReservationDto {
+  id: number
+  roomId: number
+  room: RoomDto
+  checkIn: Date
+  checkOut: Date
+  isPaid: boolean
+  wishes: string | null
+  totalPrice: number
+  booker: {
+    name: string
+    lastName: string
+    middleName: string
+    email: string
+    phone: string
+  }
+
+  guests: CreateReservationGuest[]
 }
