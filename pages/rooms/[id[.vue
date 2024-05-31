@@ -430,7 +430,7 @@ async function createReservation() {
       </section>
       <section class="flex flex-col gap-4">
         <h3 class="text-3xl font-bold">
-          Оплата
+          Оплата {{ totalPrice }}p
         </h3>
 
         <Tabs v-model="tab">
